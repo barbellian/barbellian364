@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ko">
 <head>
@@ -123,6 +124,7 @@ Epley · Brzycki · Lander · Mayhew 총 4개 공식의 산술평균
 </div>
 <footer>BARBELLIAN 364+1</footer>
 </div></main>
+
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
@@ -206,7 +208,22 @@ $("weight").addEventListener("input",render);$("reps").addEventListener("input",
 setActive();render();
 })();
 </script>
+
 <script>
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+if("serviceWorker" in navigator){
+ let refreshing=false;
+
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{
+  if(refreshing)return;
+  refreshing=true;
+  window.location.reload();
+ });
+
+ window.addEventListener("load",()=>{
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+ });
+}
 </script>
-</body></html>
+</body>
+</html>
+
