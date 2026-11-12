@@ -43,6 +43,7 @@ input:focus{border-color:#111;box-shadow:0 0 0 1px #111}
 .rep-card{border:1.5px solid #bcbcbc;border-radius:13px;padding:14px 4px 13px;text-align:center;min-width:0}
 .rep-title{font-size:12px;font-weight:850;white-space:nowrap}
 .rep-number{font-size:27px;font-weight:950;letter-spacing:-.035em;margin-top:10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rep-number.decimal{font-size:25px}
 .rep-number small{font-size:12px;margin-left:3px}
 .percent-list{display:flex;flex-direction:column;gap:0}
 .percent-row{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;border-radius:8px;font-size:14px;font-weight:850;font-variant-numeric:tabular-nums}
@@ -179,7 +180,7 @@ function render(){
    ? oneRm*repPercent[i]/100
    : oneRm/exerciseFactors[state.exercise][i];
   const percentage=Math.round(predicted/oneRm*100);
-  return `<div class="rep-card"><div class="rep-title">${targetReps}RM (${percentage}%)</div><div class="rep-number">${format(predicted)}<small>${state.unit}</small></div></div>`;
+  return `<div class="rep-card"><div class="rep-title">${targetReps}RM (${percentage}%)</div><div class="rep-number ${state.round!==1?"decimal":""}">${format(predicted)}<small>${state.unit}</small></div></div>`;
  });
  $("repsView").innerHTML=repResults.join("");
 
