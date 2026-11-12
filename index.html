@@ -177,7 +177,7 @@ function render(){
  $("resultUnit").textContent=state.unit;
  $("resultMeta").textContent=`${state.exercise} · ${format(w)}${state.unit} × ${r}회`;
  $("repsView").innerHTML=repPercent.map((pct,i)=>`<div class="rep-card"><div class="rep-title">${i+1}RM (${pct}%)</div><div class="rep-number">${format(oneRm*pct/100)}<small>${state.unit}</small></div></div>`).join("");
- const percentRows=[100,95,90,85,80,75,70,65,60,55,50];
+ const percentRows=[120,115,110,105,100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5];
  $("percentView").innerHTML=percentRows.map(pct=>`<div class="percent-row ${pct===100?"highlight":""}"><span>${pct}%</span><span class="percent-result">${format(oneRm*pct/100)}<small>${state.unit}</small></span></div>`).join("");
  $("repsView").hidden=state.tab!=="reps";$("percentView").hidden=state.tab!=="percent";
 }
