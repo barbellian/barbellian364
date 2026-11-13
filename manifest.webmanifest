@@ -1,3 +1,4 @@
+
 {
   "name": "BARBELLIAN 1RM 계산기",
   "short_name": "1RM 계산기",
@@ -7,7 +8,6 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "./icon-192.png",
