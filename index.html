@@ -511,8 +511,6 @@ details[open] summary:after{
 </div>
 </div>
 
-<div class="error" id="error" aria-live="polite"></div>
-
 <section class="result" aria-live="polite">
 <div class="result-kicker">ESTIMATED 1RM</div>
 <div class="result-number">
@@ -726,7 +724,7 @@ function render(){
  const validW=
   rawW!==""&&
   Number.isFinite(w)&&
-  w>0;
+  w>=0;
 
  const validR=
   rawR!==""&&
@@ -738,12 +736,6 @@ function render(){
  // 탭 표시 상태
  $("repsView").hidden=state.tab!=="reps";
  $("percentView").hidden=state.tab!=="percent";
-
- // 중량 경고만 표시
- $("error").textContent=
-  rawW!==""&&!validW
-   ?"중량: 0보다 큰 숫자를 입력해 주세요."
-   :"";
 
  // 입력값이 유효하지 않을 때
  if(!validW||!validR){
@@ -803,7 +795,9 @@ function render(){
   const percentage=
    state.exercise==="기타"
     ?String(repPercent[i])
-    :(predicted/oneRm*100).toFixed(1);
+    :oneRm===0
+     ?(100/exerciseFactors[state.exercise][i]).toFixed(1)
+     :(predicted/oneRm*100).toFixed(1);
 
   const formatted=format(predicted);
 
@@ -935,7 +929,7 @@ $("weight").addEventListener("input",()=>{
 $("reps").addEventListener("beforeinput",event=>{
 
  // 삭제 동작은 허용
- if(event.inputType.startsWith("delete"))return;
+ if(event.inputType && event.inputType.startsWith("delete"))return;
 
  const input=$("reps");
  let inserted=event.data;
