@@ -637,9 +637,7 @@ function changeWeightUnit(next){
 
  if(next===state.unit)return;
 
- // 현재 입력값을 먼저 저장
- saveWeightInput();
-
+ // 기존에 저장된 기준 중량은 그대로 유지
  state.unit=next;
 
  // 입력값이 있을 때만 변환
