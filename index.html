@@ -807,10 +807,13 @@ function render(){
     ?String(repPercent[i])
     :(predicted/oneRm*100).toFixed(1);
 
+  // 실제 표시되는 숫자에 소수점이 있는지 확인
+  const formatted= format(predicted);
+
   const numberClass=
-   state.round===1
-    ?""
-    :"decimal";
+   formatted.includes(".")
+    ?"decimal"
+    :"";
 
   // 입력한 횟수와 일치하는 카드만 강조
   const matchClass=
@@ -822,7 +825,7 @@ function render(){
    <div class="rep-card ${matchClass}">
     <div class="rep-title">${targetReps}RM (${percentage}%)</div>
     <div class="rep-number ${numberClass}">
-     ${format(predicted)}<small>${state.unit}</small>
+     ${formatted}<small>${state.unit}</small>
     </div>
    </div>
   `;
