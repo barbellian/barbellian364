@@ -301,13 +301,11 @@ input:focus{
  background:#fff;
 }
 
-/* 입력한 횟수와 일치하는 카드 강조 */
 .rep-card.input-match{
  background:#e2e2e2;
  border:2px solid #555;
 }
 
-/* 횟수별 카드 제목 자동 축소 */
 .rep-title{
  font-size:clamp(8px,13cqi,12px);
  font-weight:850;
@@ -321,7 +319,8 @@ input:focus{
  letter-spacing:-.035em;
  margin-top:10px;
  white-space:nowrap;
- font-variant-numeric:tabular-nums
+ font-variant-numeric:tabular-nums;
+ width:100%;
 }
 
 .rep-number.decimal{
@@ -329,8 +328,8 @@ input:focus{
 }
 
 .rep-number small{
- font-size:clamp(9px,13cqi,12px);
- margin-left:3px
+ font-size:.45em;
+ margin-left:.12em
 }
 
 .percent-list{
@@ -496,7 +495,7 @@ details[open] summary:after{
 <div class="fields">
 <div>
 <label for="weight">중량 (<span id="weightUnit">kg</span>)</label>
-<input id="weight" type="number" min="0" step="any" inputmode="decimal" placeholder="중량 입력">
+<input id="weight" type="text" inputmode="decimal" maxlength="6" placeholder="중량 입력" autocomplete="off">
 </div>
 
 <div>
@@ -557,29 +556,52 @@ const state={
  unit:"kg",
  round:1,
  tab:"reps",
-
- // 입력 중량을 kg 기준으로 보관
  weightKg:null,
-
- // 사용자가 처음 입력한 단위와 값을 보관
  weightSourceUnit:null,
  weightSourceValue:null
 };
 
 const LB_PER_KG=2.2046226218;
 
-// 기타 종목 NSCA 백분율표 (1~12회)
 const repPercent=[
  100,95,93,90,87,85,83,80,77,75,73,70
 ];
 
-// 종목별 1RM 환산 계수표 (1~12회)
 const exerciseFactors={
  "스쿼트":[1,1.048,1.130,1.158,1.200,1.242,1.284,1.326,1.368,1.410,1.452,1.494],
  "벤치프레스":[1,1.035,1.080,1.115,1.150,1.180,1.220,1.255,1.290,1.325,1.360,1.395],
  "데드리프트":[1,1.065,1.130,1.147,1.164,1.181,1.198,1.220,1.232,1.240,1.252,1.264],
  "오버헤드프레스":[1,1.030,1.065,1.100,1.135,1.165,1.200,1.230,1.265,1.295,1.325,1.355]
 };
+
+// 소수점 둘째 자리까지 반올림
+function round2(value){
+ return Math.round((value+Number.EPSILON)*100)/100;
+}
+
+// 입력값 제한: 정수 3자리, 소수 2자리
+function limitWeightInput(value){
+
+ let cleaned=value.replace(/[^0-9.]/g,"");
+
+ const dotIndex=cleaned.indexOf(".");
+
+ if(dotIndex!==-1){
+  cleaned=
+   cleaned.slice(0,dotIndex+1)+
+   cleaned.slice(dotIndex+1).replace(/\./g,"");
+ }
+
+ let parts=cleaned.split(".");
+ let integerPart=parts[0].slice(0,3);
+ let decimalPart=(parts[1]||"").slice(0,2);
+
+ if(parts.length>1){
+  return integerPart+"."+decimalPart;
+ }
+
+ return integerPart;
+}
 
 // 선택한 단위로 반올림
 function roundValue(value){
@@ -597,12 +619,11 @@ function format(value){
  return n.toFixed(1);
 }
 
-// kg 기준 중량을 현재 표시 단위로 변환
 function displayFromKg(kg){
  return state.unit==="kg"?kg:kg*LB_PER_KG;
 }
 
-// 현재 입력값을 kg 기준으로 저장
+// 입력값을 kg 기준으로 저장
 function saveWeightInput(){
 
  const raw=$("weight").value.trim();
@@ -616,12 +637,7 @@ function saveWeightInput(){
 
  const value=Number(raw);
 
- if(!Number.isFinite(value)){
-  state.weightKg=null;
-  state.weightSourceUnit=null;
-  state.weightSourceValue=null;
-  return;
- }
+ if(!Number.isFinite(value))return;
 
  state.weightKg=
   state.unit==="kg"
@@ -632,38 +648,38 @@ function saveWeightInput(){
  state.weightSourceValue=raw;
 }
 
-// 표시 단위 변경
+// 단위 변경
 function changeWeightUnit(next){
 
  if(next===state.unit)return;
 
- // 기존에 저장된 기준 중량은 그대로 유지
+ saveWeightInput();
+
  state.unit=next;
 
- // 입력값이 있을 때만 변환
  if(state.weightKg!==null){
 
   let converted;
 
-  // 원래 입력했던 단위로 돌아오면 원래 입력값 복원
   if(next===state.weightSourceUnit){
 
    converted=state.weightSourceValue;
 
-  }else if(next==="kg"){
-
-   converted=String(state.weightKg);
-
   }else{
 
-   // lb 표시값은 소수점 넷째 자리까지 표시
-   converted=String(
-    Number((state.weightKg*LB_PER_KG).toFixed(4))
-   );
+   const rawConverted=
+    next==="kg"
+     ?state.weightKg
+     :state.weightKg*LB_PER_KG;
+
+   converted=round2(rawConverted).toFixed(2);
 
   }
 
   $("weight").value=converted;
+
+  // 변환된 입력값을 새 단위 기준으로 다시 저장
+  saveWeightInput();
 
  }
 
@@ -671,43 +687,27 @@ function changeWeightUnit(next){
  render();
 }
 
-// 선택 상태 표시
 function setActive(){
 
  document.querySelectorAll("[data-exercise]").forEach(button=>{
-  button.classList.toggle(
-   "active",
-   button.dataset.exercise===state.exercise
-  );
+  button.classList.toggle("active",button.dataset.exercise===state.exercise);
  });
 
  document.querySelectorAll("[data-unit]").forEach(button=>{
-  button.classList.toggle(
-   "active",
-   button.dataset.unit===state.unit
-  );
+  button.classList.toggle("active",button.dataset.unit===state.unit);
  });
 
  document.querySelectorAll("[data-round]").forEach(button=>{
   const round=Number(button.dataset.round);
-
-  button.classList.toggle(
-   "active",
-   round===state.round
-  );
-
+  button.classList.toggle("active",round===state.round);
   button.textContent=button.dataset.round+state.unit;
  });
 
  document.querySelectorAll("[data-tab]").forEach(button=>{
-  button.classList.toggle(
-   "active",
-   button.dataset.tab===state.tab
-  );
+  button.classList.toggle("active",button.dataset.tab===state.tab);
  });
 }
 
-// 결과 계산 및 화면 출력
 function render(){
 
  const rawW=$("weight").value.trim();
@@ -719,7 +719,8 @@ function render(){
  const validW=
   rawW!==""&&
   Number.isFinite(w)&&
-  w>0;
+  w>0&&
+  w<=999.99;
 
  const validR=
   rawR!==""&&
@@ -730,33 +731,27 @@ function render(){
  $("weightUnit").textContent=state.unit;
  $("resultUnit").textContent=state.unit;
 
- // 탭 표시 상태
  $("repsView").hidden=state.tab!=="reps";
  $("percentView").hidden=state.tab!=="percent";
 
- // 입력 오류 표시
  $("error").textContent=
-  rawW!==""&&!validW
-   ?"중량은 0보다 큰 숫자로 입력해 주세요."
+  rawW!==""&&(!Number.isFinite(w)||w<=0||w>999.99)
+   ?"중량은 0.01~999.99 범위로 입력해 주세요."
    :rawR!==""&&!validR
     ?"횟수는 1~12회 정수만 입력할 수 있습니다."
     :"";
 
- // 입력값이 유효하지 않을 때
  if(!validW||!validR){
 
   $("oneRm").textContent="--";
   $("resultMeta").textContent="중량과 횟수를 입력해 주세요.";
-
   $("repsView").innerHTML="";
-
   $("percentView").innerHTML=
    '<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
 
   return;
  }
 
- // 입력 중량을 kg 기준으로 변환
  const weightKg=
   state.unit==="kg"
    ?w
@@ -764,31 +759,21 @@ function render(){
 
  let oneRmKg;
 
- // 1회 입력은 입력 중량 자체를 1RM으로 사용
  if(r===1){
-
   oneRmKg=weightKg;
-
  }else if(state.exercise==="기타"){
-
   oneRmKg=weightKg/(repPercent[r-1]/100);
-
  }else{
-
   oneRmKg=weightKg*exerciseFactors[state.exercise][r-1];
-
  }
 
- // 현재 표시 단위로 변환
  const oneRm=displayFromKg(oneRmKg);
 
  $("oneRm").textContent=format(oneRm);
 
- // 입력 중량은 원래 입력값 그대로 표시
  $("resultMeta").textContent=
   `${state.exercise} · ${rawW}${state.unit} × ${r}회`;
 
- // 횟수별 결과
  const repResults=Array.from({length:12},(_,i)=>{
 
   const targetReps=i+1;
@@ -798,22 +783,13 @@ function render(){
     ?oneRm*repPercent[i]/100
     :oneRm/exerciseFactors[state.exercise][i];
 
-  // 기타는 정수 백분율, 나머지는 소수점 첫째 자리
   const percentage=
    state.exercise==="기타"
     ?String(repPercent[i])
     :(predicted/oneRm*100).toFixed(1);
 
-  const numberClass=
-   state.round===1
-    ?""
-    :"decimal";
-
-  // 입력한 횟수와 일치하는 카드만 강조
-  const matchClass=
-   targetReps===r
-    ?"input-match"
-    :"";
+  const numberClass=state.round===1?"":"decimal";
+  const matchClass=targetReps===r?"input-match":"";
 
   return `
    <div class="rep-card ${matchClass}">
@@ -823,12 +799,25 @@ function render(){
     </div>
    </div>
   `;
-
  });
 
  $("repsView").innerHTML=repResults.join("");
 
- // 퍼센트별 결과
+ // 숫자와 단위가 카드 안에 들어오도록 자동 축소
+ document.querySelectorAll(".rep-number").forEach(el=>{
+
+  const baseSize=parseFloat(getComputedStyle(el).fontSize);
+  let size=baseSize;
+
+  el.style.fontSize=size+"px";
+
+  while(el.scrollWidth>el.clientWidth&&size>10){
+   size-=0.5;
+   el.style.fontSize=size+"px";
+  }
+
+ });
+
  const percentRows=[
   120,115,110,105,100,95,90,85,80,75,70,65,
   60,55,50,45,40,35,30,25,20,15,10,5
@@ -851,68 +840,64 @@ function render(){
 
 }
 
-// 종목 선택
-document.querySelectorAll("[data-exercise]").forEach(button=>{
-
- button.addEventListener("click",()=>{
-
-  state.exercise=button.dataset.exercise;
-
-  setActive();
-  render();
-
- });
-
-});
-
-// kg / lb 전환
-document.querySelectorAll("[data-unit]").forEach(button=>{
-
- button.addEventListener("click",()=>{
-
-  changeWeightUnit(button.dataset.unit);
-
- });
-
-});
-
-// 산출 중량 단위 선택
-document.querySelectorAll("[data-round]").forEach(button=>{
-
- button.addEventListener("click",()=>{
-
-  state.round=Number(button.dataset.round);
-
-  setActive();
-  render();
-
- });
-
-});
-
-// 결과 탭 전환
-document.querySelectorAll("[data-tab]").forEach(button=>{
-
- button.addEventListener("click",()=>{
-
-  state.tab=button.dataset.tab;
-
-  setActive();
-  render();
-
- });
-
-});
-
-// 중량 입력값 변경
+// 중량 입력 제한
 $("weight").addEventListener("input",()=>{
+
+ const input=$("weight");
+ const limited=limitWeightInput(input.value);
+
+ if(input.value!==limited){
+  const position=input.selectionStart;
+  input.value=limited;
+
+  if(position!==null){
+   input.setSelectionRange(
+    Math.min(position,limited.length),
+    Math.min(position,limited.length)
+   );
+  }
+ }
 
  saveWeightInput();
  render();
 
 });
 
-// 횟수 입력값 변경
+// 종목 선택
+document.querySelectorAll("[data-exercise]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  state.exercise=button.dataset.exercise;
+  setActive();
+  render();
+ });
+});
+
+// kg / lb 전환
+document.querySelectorAll("[data-unit]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  changeWeightUnit(button.dataset.unit);
+ });
+});
+
+// 산출 중량 단위
+document.querySelectorAll("[data-round]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  state.round=Number(button.dataset.round);
+  setActive();
+  render();
+ });
+});
+
+// 탭 전환
+document.querySelectorAll("[data-tab]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  state.tab=button.dataset.tab;
+  setActive();
+  render();
+ });
+});
+
+// 횟수 입력
 $("reps").addEventListener("input",render);
 
 // 최초 실행
@@ -924,13 +909,11 @@ render();
 
 <script>
 if("serviceWorker" in navigator){
-
  window.addEventListener("load",()=>{
   navigator.serviceWorker
    .register("./sw.js")
    .catch(()=>{});
  });
-
 }
 </script>
 
