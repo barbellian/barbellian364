@@ -476,7 +476,7 @@ details[open] summary:after{
 <div class="section-title">종목 선택</div>
 
 <div class="exercise" id="exerciseChoices">
-<button type="button" class="choice" data-exercise="스쿼트">스쿼트</button>
+<button type="button" class="choice active" data-exercise="스쿼트">스쿼트</button>
 <button type="button" class="choice" data-exercise="벤치프레스">벤치프레스</button>
 <button type="button" class="choice" data-exercise="데드리프트">데드리프트</button>
 <button type="button" class="choice" data-exercise="오버헤드프레스">오버헤드프레스</button>
@@ -496,12 +496,12 @@ details[open] summary:after{
 <div class="fields">
 <div>
 <label for="weight">중량 (<span id="weightUnit">kg</span>)</label>
-<input id="weight" type="number" min="0" step="any" inputmode="decimal" value="100" placeholder="중량 입력">
+<input id="weight" type="number" min="0" step="any" inputmode="decimal" placeholder="중량 입력">
 </div>
 
 <div>
 <label for="reps">횟수 (1~12회)</label>
-<input id="reps" type="number" min="1" max="12" step="1" inputmode="numeric" value="5" placeholder="횟수 입력">
+<input id="reps" type="number" min="1" max="12" step="1" inputmode="numeric" placeholder="횟수 입력">
 </div>
 </div>
 
@@ -510,9 +510,9 @@ details[open] summary:after{
 <section class="result" aria-live="polite">
 <div class="result-kicker">ESTIMATED 1RM</div>
 <div class="result-number">
-<span id="oneRm">116.5</span><small id="resultUnit">kg</small>
+<span id="oneRm">--</span><small id="resultUnit">kg</small>
 </div>
-<div class="result-meta" id="resultMeta">데드리프트 · 100kg × 5회</div>
+<div class="result-meta" id="resultMeta">중량과 횟수를 입력해 주세요.</div>
 </section>
 
 <div class="tabs">
@@ -553,10 +553,17 @@ NSCA Training Load Chart의 반복 횟수별 비율 적용(11회 73%)
 const $=id=>document.getElementById(id);
 
 const state={
- exercise:"데드리프트",
+ exercise:"스쿼트",
  unit:"kg",
  round:1,
- tab:"reps"
+ tab:"reps",
+
+ // 입력 중량을 kg 기준으로 보관
+ weightKg:null,
+
+ // 사용자가 처음 입력한 단위와 값을 보관
+ weightSourceUnit:null,
+ weightSourceValue:null
 };
 
 const LB_PER_KG=2.2046226218;
@@ -593,6 +600,77 @@ function format(value){
 // kg 기준 중량을 현재 표시 단위로 변환
 function displayFromKg(kg){
  return state.unit==="kg"?kg:kg*LB_PER_KG;
+}
+
+// 현재 입력값을 kg 기준으로 저장
+function saveWeightInput(){
+
+ const raw=$("weight").value.trim();
+
+ if(raw===""){
+  state.weightKg=null;
+  state.weightSourceUnit=null;
+  state.weightSourceValue=null;
+  return;
+ }
+
+ const value=Number(raw);
+
+ if(!Number.isFinite(value)){
+  state.weightKg=null;
+  state.weightSourceUnit=null;
+  state.weightSourceValue=null;
+  return;
+ }
+
+ state.weightKg=
+  state.unit==="kg"
+   ?value
+   :value/LB_PER_KG;
+
+ state.weightSourceUnit=state.unit;
+ state.weightSourceValue=raw;
+}
+
+// 표시 단위 변경
+function changeWeightUnit(next){
+
+ if(next===state.unit)return;
+
+ // 현재 입력값을 먼저 저장
+ saveWeightInput();
+
+ state.unit=next;
+
+ // 입력값이 있을 때만 변환
+ if(state.weightKg!==null){
+
+  let converted;
+
+  // 원래 입력했던 단위로 돌아오면 원래 입력값 복원
+  if(next===state.weightSourceUnit){
+
+   converted=state.weightSourceValue;
+
+  }else if(next==="kg"){
+
+   converted=String(state.weightKg);
+
+  }else{
+
+   // lb 표시값은 소수점 넷째 자리까지 표시
+   converted=String(
+    Number((state.weightKg*LB_PER_KG).toFixed(4))
+   );
+
+  }
+
+  $("weight").value=converted;
+
+ }
+
+ setActive();
+ render();
 }
 
 // 선택 상태 표시
@@ -670,7 +748,7 @@ function render(){
  if(!validW||!validR){
 
   $("oneRm").textContent="--";
-  $("resultMeta").textContent="중량과 횟수를 확인해 주세요.";
+  $("resultMeta").textContent="중량과 횟수를 입력해 주세요.";
 
   $("repsView").innerHTML="";
 
@@ -794,35 +872,7 @@ document.querySelectorAll("[data-unit]").forEach(button=>{
 
  button.addEventListener("click",()=>{
 
-  const next=button.dataset.unit;
-
-  if(next===state.unit)return;
-
-  const inputValue=$("weight").value.trim();
-
-  if(inputValue!==""){
-
-   const old=Number(inputValue);
-
-   if(Number.isFinite(old)){
-
-    const converted=
-     state.unit==="kg"
-      ?old*LB_PER_KG
-      :old/LB_PER_KG;
-
-    $("weight").value=String(
-     Number(converted.toFixed(4))
-    );
-
-   }
-
-  }
-
-  state.unit=next;
-
-  setActive();
-  render();
+  changeWeightUnit(button.dataset.unit);
 
  });
 
@@ -856,8 +906,15 @@ document.querySelectorAll("[data-tab]").forEach(button=>{
 
 });
 
-// 입력값 변경
-$("weight").addEventListener("input",render);
+// 중량 입력값 변경
+$("weight").addEventListener("input",()=>{
+
+ saveWeightInput();
+ render();
+
+});
+
+// 횟수 입력값 변경
 $("reps").addEventListener("input",render);
 
 // 최초 실행
