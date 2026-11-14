@@ -135,8 +135,13 @@ h1{
  padding-left:5px
 }
 
-/* 종목 선택과 산출 중량 단위 제목 아래 간격 */
+/* 공통 제목 아래 간격 */
 .section-title.tight-bottom{
+ margin-bottom:6px;
+}
+
+/* 산출 중량 단위 제목 아래 간격만 별도 조절 */
+.section-title.rounding-title{
  margin-bottom:6px;
 }
 
@@ -493,7 +498,7 @@ details[open] summary:after{
 <button type="button" class="choice" data-exercise="기타">기타</button>
 </div>
 
-<div class="section-title tight-bottom">산출 중량 단위</div>
+<div class="section-title tight-bottom rounding-title">산출 중량 단위</div>
 
 <div class="segment" id="rounding">
 <button type="button" class="active" data-round="1">1kg</button>
