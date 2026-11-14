@@ -115,21 +115,9 @@ h1{
  display:flex;
  flex-direction:column;
  align-items:stretch;
- width:76px;
- min-width:76px;
+ width:68px;
+ min-width:68px;
  flex-shrink:0;
-}
-
-.unit-label{
- width:100%;
- text-align:center;
- font-size:11px;
- line-height:1.3;
- font-weight:700;
- color:#666;
- letter-spacing:.02em;
- margin-bottom:3px;
- white-space:nowrap;
 }
 
 .unit-switch{
@@ -138,8 +126,8 @@ h1{
  gap:2px;
  background:#ededed;
  border:1px solid #b5b5b5;
- padding:3px;
- border-radius:12px;
+ padding:2px;
+ border-radius:10px;
  width:100%;
  flex-shrink:0;
 }
@@ -148,11 +136,11 @@ h1{
  flex:1;
  min-width:0;
  border:0;
- border-radius:9px;
- padding:6px 0;
+ border-radius:8px;
+ padding:5px 0;
  background:transparent;
  color:#555;
- font-size:12px;
+ font-size:11px;
  line-height:1.3;
  font-weight:800;
 }
@@ -173,7 +161,8 @@ h1{
 }
 
 .section-title.tight-bottom{
- margin-bottom:6px;
+ margin-bottom:4px;
+ font-size:21px;
 }
 
 /* 종목 선택 */
@@ -208,32 +197,29 @@ h1{
  border-color:#111;
 }
 
-/* 산출 중량 제목 + 표시 단위
-   겹침 없이 안정적인 독립 배치 */
+/* 산출 중량 제목 + 표시 단위 */
 
 .rounding-header{
- display:grid;
- grid-template-columns:minmax(0,1fr) 76px;
- align-items:end;
- column-gap:20px;
-
+ display:flex;
+ align-items:center;
+ justify-content:flex-start;
+ gap:8px;
  margin-top:16px;
  margin-bottom:3px;
-
  position:relative;
  z-index:2;
 }
 
 .rounding-header .section-title{
- margin:0 0 5px;
+ margin:0;
  padding-left:5px;
- align-self:end;
  white-space:nowrap;
+ font-size:21px;
 }
 
 .rounding-header .unit-control{
- width:76px;
- min-width:76px;
+ width:68px;
+ min-width:68px;
 }
 
 /* 산출 중량 단위 */
@@ -287,7 +273,7 @@ h1{
 
 label{
  display:block;
- font-size:15px;
+ font-size:16px;
  font-weight:800;
  margin-bottom:3px;
  padding-left:12px;
@@ -572,18 +558,22 @@ details[open] summary:after{
  }
 
  .rounding-header{
-  grid-template-columns:minmax(0,1fr) 74px;
-  column-gap:6px;
+  gap:7px;
  }
 
  .rounding-header .section-title{
-  font-size:18px;
+  font-size:21px;
  }
 
  .unit-control,
  .rounding-header .unit-control{
-  width:74px;
-  min-width:74px;
+  width:66px;
+  min-width:66px;
+ }
+
+ .unit-switch button{
+  font-size:10px;
+  padding:5px 0;
  }
 
  .segment button{
@@ -662,8 +652,6 @@ data-exercise="기타">기타</button>
 </div>
 
 <div class="unit-control">
-
-<div class="unit-label">표시 단위</div>
 
 <div class="unit-switch" id="units">
 
