@@ -79,7 +79,7 @@ h1{
 .eyeline-row{
  display:flex;
  align-items:center;
- justify-content:space-between;
+ justify-content:flex-start;
  margin-top:5px
 }
 
@@ -90,6 +90,15 @@ h1{
  color:#555
 }
 
+/* 표시 단위 */
+.unit-control{
+ display:flex;
+ flex-direction:column;
+ align-items:stretch;
+ width:76px;
+ flex-shrink:0
+}
+
 .unit-label{
  width:76px;
  text-align:center;
@@ -97,7 +106,8 @@ h1{
  font-weight:650;
  color:#666;
  letter-spacing:.02em;
- margin-top:-2px;
+ margin-bottom:3px;
+ white-space:nowrap;
 }
 
 .unit-switch{
@@ -107,15 +117,15 @@ h1{
  background:#ededed;
  border:1px solid #b5b5b5;
  padding:3px;
- border-radius:9px;
+ border-radius:12px;
  flex-shrink:0;
- width:76px
+ width:76px;
 }
 
 .unit-switch button{
  flex:1;
  border:0;
- border-radius:7px;
+ border-radius:9px;
  padding:6px 0;
  background:transparent;
  color:#555;
@@ -136,14 +146,17 @@ h1{
  padding-left:5px
 }
 
-/* 공통 제목 아래 간격 */
 .section-title.tight-bottom{
  margin-bottom:6px;
 }
 
-/* 산출 중량 단위 제목 아래 간격만 별도 조절 */
 .section-title.rounding-title{
  margin-bottom:4.5px;
+}
+
+/* 종목 선택 영역 */
+.exercise-wrap{
+ position:relative;
 }
 
 .exercise{
@@ -168,6 +181,15 @@ h1{
  border-color:#111
 }
 
+/* 표시 단위 위치 조정 */
+.exercise-wrap .unit-control{
+ position:absolute;
+ right:0;
+ bottom:-42px;
+ z-index:2;
+}
+
+/* 산출 중량 단위 */
 .segment{
  display:flex;
  gap:3px;
@@ -477,19 +499,16 @@ details[open] summary:after{
 
 <div class="title-row">
 <h1>1RM 계산기</h1>
-<div class="unit-switch" id="units">
-<button type="button" class="active" data-unit="kg">kg</button>
-<button type="button" data-unit="lb">lb</button>
-</div>
 </div>
 
 <div class="eyeline-row">
 <div class="eyeline">STRENGTH TRAINING TOOL</div>
-<div class="unit-label">표시 단위</div>
 </div>
 </header>
 
 <div class="section-title tight-bottom">종목 선택</div>
+
+<div class="exercise-wrap">
 
 <div class="exercise" id="exerciseChoices">
 <button type="button" class="choice active" data-exercise="스쿼트">스쿼트</button>
@@ -497,6 +516,16 @@ details[open] summary:after{
 <button type="button" class="choice" data-exercise="데드리프트">데드리프트</button>
 <button type="button" class="choice" data-exercise="오버헤드프레스">오버헤드프레스</button>
 <button type="button" class="choice" data-exercise="기타">기타</button>
+</div>
+
+<div class="unit-control">
+<div class="unit-label">표시 단위</div>
+<div class="unit-switch" id="units">
+<button type="button" class="active" data-unit="kg">kg</button>
+<button type="button" data-unit="lb">lb</button>
+</div>
+</div>
+
 </div>
 
 <div class="section-title tight-bottom rounding-title">산출 중량 단위</div>
