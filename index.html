@@ -135,6 +135,11 @@ h1{
  padding-left:5px
 }
 
+/* 종목 선택과 산출 중량 단위 제목 아래 간격 */
+.section-title.tight-bottom{
+ margin-bottom:7px;
+}
+
 .exercise{
  display:grid;
  grid-template-columns:1fr 1fr;
@@ -478,7 +483,7 @@ details[open] summary:after{
 </div>
 </header>
 
-<div class="section-title">종목 선택</div>
+<div class="section-title tight-bottom">종목 선택</div>
 
 <div class="exercise" id="exerciseChoices">
 <button type="button" class="choice active" data-exercise="스쿼트">스쿼트</button>
@@ -488,7 +493,7 @@ details[open] summary:after{
 <button type="button" class="choice" data-exercise="기타">기타</button>
 </div>
 
-<div class="section-title">산출 중량 단위</div>
+<div class="section-title tight-bottom">산출 중량 단위</div>
 
 <div class="segment" id="rounding">
 <button type="button" class="active" data-round="1">1kg</button>
@@ -567,7 +572,6 @@ const state={
  unit:"kg",
  round:1,
  tab:"reps",
-
  weightKg:null,
  weightSourceUnit:null,
  weightSourceValue:null
@@ -598,11 +602,9 @@ function roundValue(value){
 
 function format(value){
  const n=roundValue(value);
-
  if(state.round===1){
   return String(Math.round(n));
  }
-
  return n.toFixed(1);
 }
 
@@ -611,7 +613,6 @@ function displayFromKg(kg){
 }
 
 function saveWeightInput(){
-
  const raw=$("weight").value.trim();
 
  if(raw===""){
@@ -630,43 +631,28 @@ function saveWeightInput(){
   return;
  }
 
- state.weightKg=
-  state.unit==="kg"
-   ?value
-   :value/LB_PER_KG;
-
+ state.weightKg=state.unit==="kg"?value:value/LB_PER_KG;
  state.weightSourceUnit=state.unit;
  state.weightSourceValue=raw;
 }
 
 function changeWeightUnit(next){
-
  if(next===state.unit)return;
 
  state.unit=next;
 
  if(state.weightKg!==null){
-
   let converted;
 
   if(next===state.weightSourceUnit){
-
    converted=state.weightSourceValue;
-
   }else if(next==="kg"){
-
    converted=String(state.weightKg);
-
   }else{
-
-   converted=String(
-    Number((state.weightKg*LB_PER_KG).toFixed(4))
-   );
-
+   converted=String(Number((state.weightKg*LB_PER_KG).toFixed(4)));
   }
 
   $("weight").value=converted;
-
  }
 
  setActive();
@@ -674,140 +660,80 @@ function changeWeightUnit(next){
 }
 
 function setActive(){
-
  document.querySelectorAll("[data-exercise]").forEach(button=>{
-
-  const selected=
-   button.dataset.exercise===state.exercise;
-
+  const selected=button.dataset.exercise===state.exercise;
   button.classList.toggle("active",selected);
   button.setAttribute("aria-pressed",String(selected));
-
  });
 
  document.querySelectorAll("[data-unit]").forEach(button=>{
-
-  const selected=
-   button.dataset.unit===state.unit;
-
+  const selected=button.dataset.unit===state.unit;
   button.classList.toggle("active",selected);
   button.setAttribute("aria-pressed",String(selected));
-
  });
 
  document.querySelectorAll("[data-round]").forEach(button=>{
-
   const round=Number(button.dataset.round);
   const selected=round===state.round;
-
   button.classList.toggle("active",selected);
   button.setAttribute("aria-pressed",String(selected));
-
   button.textContent=button.dataset.round+state.unit;
-
  });
 
  document.querySelectorAll("[data-tab]").forEach(button=>{
-
-  const selected=
-   button.dataset.tab===state.tab;
-
+  const selected=button.dataset.tab===state.tab;
   button.classList.toggle("active",selected);
   button.setAttribute("aria-pressed",String(selected));
-
  });
-
 }
 
 function render(){
-
  const rawW=$("weight").value.trim();
  const rawR=$("reps").value.trim();
-
  const w=Number(rawW);
  const r=Number(rawR);
 
- const validW=
-  rawW!==""&&
-  Number.isFinite(w)&&
-  w>=0;
-
- const validR=
-  rawR!==""&&
-  isValidReps(rawR);
+ const validW=rawW!==""&&Number.isFinite(w)&&w>=0;
+ const validR=rawR!==""&&isValidReps(rawR);
 
  $("weightUnit").textContent=state.unit;
  $("resultUnit").textContent=state.unit;
-
  $("repsView").hidden=state.tab!=="reps";
  $("percentView").hidden=state.tab!=="percent";
 
  if(!validW||!validR){
-
   $("oneRm").textContent="--";
   $("resultMeta").textContent="중량과 횟수를 입력해 주세요.";
-
   $("repsView").innerHTML="";
-
-  $("percentView").innerHTML=
-   '<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
-
+  $("percentView").innerHTML='<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
   return;
  }
 
- const weightKg=
-  state.unit==="kg"
-   ?w
-   :w/LB_PER_KG;
-
+ const weightKg=state.unit==="kg"?w:w/LB_PER_KG;
  let oneRmKg;
 
  if(r===1){
-
   oneRmKg=weightKg;
-
  }else if(state.exercise==="기타"){
-
   oneRmKg=weightKg/(repPercent[r-1]/100);
-
  }else{
-
   oneRmKg=weightKg*exerciseFactors[state.exercise][r-1];
-
  }
 
  const oneRm=displayFromKg(oneRmKg);
-
  $("oneRm").textContent=format(oneRm);
-
- $("resultMeta").textContent=
-  `${state.exercise} · ${rawW}${state.unit} × ${r}회`;
+ $("resultMeta").textContent=`${state.exercise} · ${rawW}${state.unit} × ${r}회`;
 
  const repResults=Array.from({length:12},(_,i)=>{
-
   const targetReps=i+1;
+  const predicted=state.exercise==="기타"
+   ?oneRm*repPercent[i]/100
+   :oneRm/exerciseFactors[state.exercise][i];
 
-  const predicted=
-   state.exercise==="기타"
-    ?oneRm*repPercent[i]/100
-    :oneRm/exerciseFactors[state.exercise][i];
-
-  const percentage=
-   oneRm===0
-    ?"0.0"
-    :(predicted/oneRm*100).toFixed(1);
-
+  const percentage=oneRm===0?"0.0":(predicted/oneRm*100).toFixed(1);
   const formatted=format(predicted);
-
-  const numberClass=
-   formatted.includes(".")
-    ?"decimal"
-    :"";
-
-  const matchClass=
-   targetReps===r
-    ?"input-match"
-    :"";
+  const numberClass=formatted.includes(".")?"decimal":"";
+  const matchClass=targetReps===r?"input-match":"";
 
   return `
    <div class="rep-card ${matchClass}">
@@ -817,34 +743,24 @@ function render(){
     </div>
    </div>
   `;
-
  });
 
  $("repsView").innerHTML=repResults.join("");
 
  document.querySelectorAll(".rep-number").forEach(el=>{
-
   const baseSize=parseFloat(getComputedStyle(el).fontSize);
   let size=baseSize;
-
   el.style.fontSize=size+"px";
 
-  while(el.scrollWidth>el.clientWidth && size>10){
-
+  while(el.scrollWidth>el.clientWidth&&size>10){
    size-=0.5;
    el.style.fontSize=size+"px";
-
   }
-
  });
 
- const percentRows=[
-  120,115,110,105,100,95,90,85,80,75,70,65,
-  60,55,50,45,40,35,30,25,20,15,10,5
- ];
+ const percentRows=[120,115,110,105,100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5];
 
  $("percentView").innerHTML=percentRows.map(pct=>{
-
   const predicted=oneRm*pct/100;
 
   return `
@@ -855,79 +771,51 @@ function render(){
     </span>
    </div>
   `;
-
  }).join("");
-
 }
 
 document.querySelectorAll("[data-exercise]").forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   state.exercise=button.dataset.exercise;
-
   setActive();
   render();
-
  });
-
 });
 
 document.querySelectorAll("[data-unit]").forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   changeWeightUnit(button.dataset.unit);
-
  });
-
 });
 
 document.querySelectorAll("[data-round]").forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   state.round=Number(button.dataset.round);
-
   setActive();
   render();
-
  });
-
 });
 
 document.querySelectorAll("[data-tab]").forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   state.tab=button.dataset.tab;
-
   setActive();
   render();
-
  });
-
 });
 
 $("weight").addEventListener("input",()=>{
-
  saveWeightInput();
  render();
-
 });
 
 $("reps").addEventListener("beforeinput",event=>{
-
- if(event.inputType && event.inputType.startsWith("delete"))return;
+ if(event.inputType&&event.inputType.startsWith("delete"))return;
 
  const input=$("reps");
  let inserted=event.data;
 
- if(
-  inserted===null&&
-  event.inputType==="insertFromPaste"&&
-  event.dataTransfer
- ){
+ if(inserted===null&&event.inputType==="insertFromPaste"&&event.dataTransfer){
   inserted=event.dataTransfer.getData("text");
  }
 
@@ -935,35 +823,24 @@ $("reps").addEventListener("beforeinput",event=>{
 
  const start=input.selectionStart;
  const end=input.selectionEnd;
-
- const candidate=
-  input.value.slice(0,start)+
-  inserted+
-  input.value.slice(end);
+ const candidate=input.value.slice(0,start)+inserted+input.value.slice(end);
 
  if(!isValidReps(candidate)){
   event.preventDefault();
  }
-
 });
 
 $("reps").addEventListener("input",()=>{
-
  const input=$("reps");
  const value=input.value;
 
  if(isValidReps(value)){
-
   lastValidReps=value;
-
  }else{
-
   input.value=lastValidReps;
-
  }
 
  render();
-
 });
 
 setActive();
@@ -974,13 +851,9 @@ render();
 
 <script>
 if("serviceWorker" in navigator){
-
  window.addEventListener("load",()=>{
-  navigator.serviceWorker
-   .register("./sw.js")
-   .catch(()=>{});
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
  });
-
 }
 </script>
 
