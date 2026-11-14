@@ -16,22 +16,40 @@
  --gray:#606060;
  --line:#c9c9c9;
  --pale:#ededed;
- --white:#fff
+ --white:#fff;
 }
 
-*{box-sizing:border-box}
+*{
+ box-sizing:border-box;
+}
+
+html{
+ -webkit-text-size-adjust:100%;
+ text-size-adjust:100%;
+}
 
 body{
  margin:0;
  background:#f3f3f3;
  color:var(--black);
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif
+ font-family:-apple-system,BlinkMacSystemFont,
+ "Apple SD Gothic Neo","Noto Sans KR",
+ Roboto,"Malgun Gothic",Arial,sans-serif;
+}
+
+button,input{
+ font-family:inherit;
+}
+
+button{
+ -webkit-appearance:none;
+ appearance:none;
 }
 
 main{
  max-width:620px;
  margin:0 auto;
- padding:16px 13px 30px
+ padding:16px 13px 30px;
 }
 
 .shell{
@@ -39,76 +57,67 @@ main{
  border:1px solid #aaa;
  border-radius:22px;
  padding:19px 17px 15px;
- box-shadow:0 5px 20px #0000000a
+ box-shadow:0 5px 20px #0000000a;
 }
 
 .brand{
- font-weight:950;
+ font-weight:900;
  font-size:29px;
- letter-spacing:.055em
+ letter-spacing:.055em;
 }
 
 .brand-sub{
  font-size:10px;
- font-weight:850;
+ font-weight:800;
  letter-spacing:.14em;
  margin-top:-4px;
- color:#444
+ color:#444;
 }
 
 .black-rule{
  height:2px;
  background:#111;
- margin:7px 0 4px
+ margin:7px 0 4px;
 }
 
 .title-row{
  display:flex;
  align-items:center;
  justify-content:space-between;
- gap:10px
+ gap:10px;
 }
 
 h1{
  font-size:40px;
  line-height:1.2;
  font-weight:900;
- margin:0
+ margin:0;
 }
 
 .eyeline-row{
  display:flex;
  align-items:center;
  justify-content:flex-start;
- margin-top:-4px
+ margin-top:-4px;
 }
 
 .eyeline{
  font-size:10px;
- font-weight:850;
+ font-weight:800;
  letter-spacing:.13em;
  color:#555;
  margin-left:5px;
 }
 
 /* 표시 단위 */
+
 .unit-control{
  display:flex;
  flex-direction:column;
  align-items:stretch;
- width:76px;
- flex-shrink:0
-}
-
-.unit-label{
- width:76px;
- text-align:center;
- font-size:11px;
- font-weight:650;
- color:#666;
- letter-spacing:.02em;
- margin-bottom:3px;
- white-space:nowrap;
+ width:68px;
+ min-width:68px;
+ flex-shrink:0;
 }
 
 .unit-switch{
@@ -117,142 +126,177 @@ h1{
  gap:2px;
  background:#ededed;
  border:1px solid #b5b5b5;
- padding:3px;
- border-radius:12px;
+ padding:2px;
+ border-radius:10px;
+ width:100%;
  flex-shrink:0;
- width:76px;
 }
 
 .unit-switch button{
  flex:1;
+ min-width:0;
  border:0;
- border-radius:9px;
- padding:6px 0;
+ border-radius:8px;
+ padding:5px 0;
  background:transparent;
  color:#555;
- font-size:12px;
- font-weight:850;
- min-width:0
+ font-size:11px;
+ line-height:1.3;
+ font-weight:800;
 }
 
 .unit-switch button.active{
  background:#111;
- color:#fff
+ color:#fff;
 }
+
+/* 공통 제목 */
 
 .section-title{
  font-size:19px;
- font-weight:850;
+ font-weight:800;
+ line-height:1.35;
  margin:11px 0 9px;
- padding-left:5px
+ padding-left:5px;
 }
 
 .section-title.tight-bottom{
- margin-bottom:6px;
+ margin-bottom:2px;
+ font-size:21px;
 }
 
-.section-title.rounding-title{
- margin-bottom:4.5px;
-}
+/* 종목 선택 */
 
-/* 종목 선택 영역 */
 .exercise-wrap{
  position:relative;
 }
 
 .exercise{
  display:grid;
- grid-template-columns:1fr 1fr;
- gap:8px
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:8px;
 }
 
 .choice{
+ width:100%;
+ min-width:0;
  min-height:49px;
  border:1.5px solid #bbb;
  border-radius:11px;
  background:#fff;
  color:#161616;
  font-size:15px;
- font-weight:850
+ font-weight:800;
+ padding:10px 5px;
+ line-height:1.35;
 }
 
 .choice.active{
  background:#111;
  color:#fff;
- border-color:#111
+ border-color:#111;
 }
 
-/* 표시 단위 위치 조정 */
-.exercise-wrap .unit-control{
- position:absolute;
- right:0;
- bottom:-35px;
+/* 산출 중량 제목 + 표시 단위 */
+
+.rounding-header{
+ display:flex;
+ align-items:center;
+ justify-content:flex-start;
+ gap:8px;
+ margin-top:16px;
+ margin-bottom:3px;
+ position:relative;
  z-index:2;
 }
 
+.rounding-header .section-title{
+ margin:0;
+ padding-left:5px;
+ white-space:nowrap;
+ font-size:21px;
+}
+
+.rounding-header .unit-control{
+ width:68px;
+ min-width:68px;
+}
+
 /* 산출 중량 단위 */
+
 .segment{
  display:flex;
  gap:3px;
  background:#ededed;
  border:1px solid #b5b5b5;
  padding:3px;
- border-radius:12px
+ border-radius:12px;
+ width:100%;
+ min-width:0;
 }
 
 .segment button{
  flex:1;
+ min-width:0;
  border:0;
  border-radius:9px;
  padding:9px 5px;
  background:transparent;
  font-size:14px;
- font-weight:850;
- color:#333
+ line-height:1.35;
+ font-weight:800;
+ color:#333;
+ white-space:nowrap;
 }
 
 .segment button.active{
  background:#111;
- color:#fff
+ color:#fff;
 }
 
 .hint{
  font-size:11.5px;
+ line-height:1.5;
  color:#555;
  margin:4px 0 0;
  padding-left:5px;
 }
 
+/* 입력 영역 */
+
 .fields{
  display:grid;
- grid-template-columns:1fr 1fr;
+ grid-template-columns:repeat(2,minmax(0,1fr));
  gap:10px;
- margin-top:9px
+ margin-top:9px;
 }
 
 label{
  display:block;
- font-size:15px;
- font-weight:850;
+ font-size:16px;
+ font-weight:800;
  margin-bottom:3px;
- padding-left:12px
+ padding-left:12px;
 }
 
 input{
+ display:block;
  width:100%;
  height:51px;
  border:1.5px solid #c9c9c9;
  border-radius:28px;
  padding:0 15px;
  font-size:19px;
- font-weight:650;
+ font-weight:700;
  outline:none;
- min-width:0
+ min-width:0;
+ background:#fff;
+ color:#111;
 }
 
 input:focus{
  border-color:#111;
- box-shadow:0 0 0 1px #111
+ box-shadow:0 0 0 1px #111;
 }
 
 .error{
@@ -260,44 +304,48 @@ input:focus{
  font-size:11px;
  color:#a11;
  font-weight:700;
- padding-top:5px
+ padding-top:5px;
 }
+
+/* 결과 */
 
 .result{
  background:#111;
  color:#fff;
  border-radius:17px;
  padding:17px 18px;
- margin-top:12px
+ margin-top:12px;
 }
 
 .result-kicker{
  font-size:12px;
- font-weight:850;
+ font-weight:800;
  letter-spacing:.04em;
- color:#e5e5e5
+ color:#e5e5e5;
 }
 
 .result-number{
  font-size:42px;
  line-height:1.15;
- font-weight:950;
+ font-weight:900;
  letter-spacing:-.035em;
  margin-top:7px;
- font-variant-numeric:tabular-nums
+ font-variant-numeric:tabular-nums;
 }
 
 .result-number small{
  font-size:21px;
  letter-spacing:0;
- margin-left:6px
+ margin-left:6px;
 }
 
 .result-meta{
  font-size:13px;
  color:#ddd;
- margin-top:8px
+ margin-top:8px;
 }
+
+/* 탭 */
 
 .tabs{
  display:flex;
@@ -306,29 +354,32 @@ input:focus{
  padding:5px;
  border-radius:13px;
  gap:5px;
- margin:14px 0 13px
+ margin:14px 0 13px;
 }
 
 .tabs button{
  flex:1;
+ min-width:0;
  border:0;
  border-radius:10px;
  padding:12px 5px;
  background:transparent;
  color:#333;
  font-size:14px;
- font-weight:850
+ font-weight:800;
 }
 
 .tabs button.active{
  background:#606060;
- color:#fff
+ color:#fff;
 }
+
+/* 횟수별 */
 
 .rep-grid{
  display:grid;
  grid-template-columns:repeat(3,minmax(0,1fr));
- gap:9px
+ gap:9px;
 }
 
 .rep-card{
@@ -348,14 +399,14 @@ input:focus{
 
 .rep-title{
  font-size:clamp(8px,13cqi,12px);
- font-weight:850;
+ font-weight:800;
  white-space:nowrap;
- letter-spacing:-.025em
+ letter-spacing:-.025em;
 }
 
 .rep-number{
  font-size:clamp(12px,30cqi,27px);
- font-weight:950;
+ font-weight:900;
  letter-spacing:-.035em;
  margin-top:10px;
  white-space:nowrap;
@@ -364,21 +415,22 @@ input:focus{
 }
 
 .rep-number.decimal{
- font-size:clamp(12px,27cqi,27px)
+ font-size:clamp(12px,27cqi,27px);
 }
 
 .rep-number small{
  font-size:.45em;
- margin-left:.12em
+ margin-left:.12em;
 }
+
+/* 퍼센트별 */
 
 .percent-list{
  display:flex;
  flex-direction:column;
- gap:0
+ gap:0;
 }
 
-/* 퍼센트별 표시 크기 조정 */
 .percent-row{
  display:flex;
  align-items:center;
@@ -386,37 +438,40 @@ input:focus{
  padding:14px 13px;
  border-radius:8px;
  font-size:16px;
- font-weight:850;
- font-variant-numeric:tabular-nums
+ font-weight:800;
+ font-variant-numeric:tabular-nums;
 }
 
 .percent-row + .percent-row{
  border-top:1px solid var(--line);
- border-radius:0
+ border-radius:0;
 }
 
 .percent-row.highlight{
- background:#e2e2e2
+ background:#e2e2e2;
+ border-radius:8px;
 }
 
 .percent-result{
  font-size:23px;
- font-weight:950
+ font-weight:900;
 }
 
 .percent-result small{
  font-size:12px;
- margin-left:3px
+ margin-left:3px;
 }
 
 [hidden]{
- display:none!important
+ display:none!important;
 }
+
+/* 계산 참고 */
 
 details{
  border-top:1px solid #333;
  margin-top:19px;
- padding-top:14px
+ padding-top:14px;
 }
 
 summary{
@@ -426,34 +481,36 @@ summary{
  justify-content:space-between;
  font-size:14px;
  font-weight:900;
- cursor:pointer
+ cursor:pointer;
 }
 
 summary::-webkit-details-marker{
- display:none
+ display:none;
 }
 
 summary:after{
  content:"＋";
- font-size:18px
+ font-size:18px;
 }
 
 details[open] summary:after{
- content:"－"
+ content:"－";
 }
 
 .detail-content{
  font-size:12px;
  line-height:1.65;
  color:#333;
- padding-top:12px
+ padding-top:12px;
 }
 
 .detail-content strong{
  display:block;
  color:#111;
- margin:9px 0 2px
+ margin:9px 0 2px;
 }
+
+/* 안내 */
 
 .notice{
  border-top:1px solid #ddd;
@@ -461,7 +518,7 @@ details[open] summary:after{
  padding-top:13px;
  font-size:11px;
  line-height:1.7;
- font-weight:650
+ font-weight:650;
 }
 
 .notice-label{
@@ -469,7 +526,7 @@ details[open] summary:after{
  letter-spacing:.13em;
  color:#555;
  font-weight:900;
- margin-bottom:5px
+ margin-bottom:5px;
 }
 
 .footer{
@@ -478,14 +535,69 @@ details[open] summary:after{
  padding-top:12px;
  text-align:right;
  font-size:11px;
- font-weight:950;
- letter-spacing:.07em
+ font-weight:900;
+ letter-spacing:.07em;
+}
+
+/* 작은 화면 */
+
+@media(max-width:380px){
+
+ main{
+  padding-left:10px;
+  padding-right:10px;
+ }
+
+ .shell{
+  padding-left:14px;
+  padding-right:14px;
+ }
+
+ .choice{
+  font-size:14px;
+ }
+
+ .rounding-header{
+  gap:7px;
+ }
+
+ .rounding-header .section-title{
+  font-size:21px;
+ }
+
+ .unit-control,
+ .rounding-header .unit-control{
+  width:66px;
+  min-width:66px;
+ }
+
+ .unit-switch button{
+  font-size:10px;
+  padding:5px 0;
+ }
+
+ .segment button{
+  font-size:13px;
+ }
+
+ .rep-grid{
+  gap:7px;
+ }
 }
 
 @media(min-width:500px){
- main{padding-top:28px}
- .shell{padding:23px}
- .rep-card{padding:16px 5px}
+
+ main{
+  padding-top:28px;
+ }
+
+ .shell{
+  padding:23px;
+ }
+
+ .rep-card{
+  padding:16px 5px;
+ }
 }
 </style>
 </head>
@@ -511,89 +623,172 @@ details[open] summary:after{
 <div class="section-title tight-bottom">종목 선택</div>
 
 <div class="exercise-wrap">
-
 <div class="exercise" id="exerciseChoices">
-<button type="button" class="choice active" data-exercise="스쿼트">스쿼트</button>
-<button type="button" class="choice" data-exercise="벤치프레스">벤치프레스</button>
-<button type="button" class="choice" data-exercise="데드리프트">데드리프트</button>
-<button type="button" class="choice" data-exercise="오버헤드프레스">오버헤드프레스</button>
-<button type="button" class="choice" data-exercise="기타">기타</button>
+
+<button type="button" class="choice active"
+data-exercise="스쿼트">스쿼트</button>
+
+<button type="button" class="choice"
+data-exercise="벤치프레스">벤치프레스</button>
+
+<button type="button" class="choice"
+data-exercise="데드리프트">데드리프트</button>
+
+<button type="button" class="choice"
+data-exercise="오버헤드프레스">오버헤드프레스</button>
+
+<button type="button" class="choice"
+data-exercise="기타">기타</button>
+
+</div>
+</div>
+
+<!-- 산출 중량 제목 + 표시 단위 -->
+
+<div class="rounding-header">
+
+<div class="section-title">
+산출 중량 단위
 </div>
 
 <div class="unit-control">
-<div class="unit-label">표시 단위</div>
+
 <div class="unit-switch" id="units">
-<button type="button" class="active" data-unit="kg">kg</button>
-<button type="button" data-unit="lb">lb</button>
+
+<button type="button" class="active"
+data-unit="kg">kg</button>
+
+<button type="button"
+data-unit="lb">lb</button>
+
+</div>
 </div>
 </div>
 
-</div>
-
-<div class="section-title tight-bottom rounding-title">산출 중량 단위</div>
+<!-- 산출 중량 단위 선택 -->
 
 <div class="segment" id="rounding">
-<button type="button" class="active" data-round="1">1kg</button>
-<button type="button" data-round="0.5">0.5kg</button>
-<button type="button" data-round="0.1">0.1kg</button>
+
+<button type="button" class="active"
+data-round="1">1kg</button>
+
+<button type="button"
+data-round="0.5">0.5kg</button>
+
+<button type="button"
+data-round="0.1">0.1kg</button>
+
 </div>
 
-<p class="hint">선택한 단위로 모든 산출 중량을 반올림합니다.</p>
+<p class="hint">
+선택한 단위로 모든 산출 중량을 반올림합니다.
+</p>
+
+<!-- 입력 영역 -->
 
 <div class="fields">
+
 <div>
-<label for="weight">중량 (<span id="weightUnit">kg</span>)</label>
-<input id="weight" type="number" min="0" step="any" inputmode="decimal" placeholder="중량 입력">
+<label for="weight">
+중량 (<span id="weightUnit">kg</span>)
+</label>
+
+<input
+id="weight"
+type="number"
+min="0"
+step="any"
+inputmode="decimal"
+placeholder="중량 입력"
+>
 </div>
 
 <div>
 <label for="reps">횟수 (1~12회)</label>
+
 <input
- id="reps"
- type="text"
- inputmode="numeric"
- pattern="[0-9]*"
- autocomplete="off"
- placeholder="횟수 입력"
+id="reps"
+type="text"
+inputmode="numeric"
+pattern="[0-9]*"
+autocomplete="off"
+placeholder="횟수 입력"
 >
 </div>
+
 </div>
 
+<!-- 결과 -->
+
 <section class="result" aria-live="polite">
+
 <div class="result-kicker">ESTIMATED 1RM</div>
+
 <div class="result-number">
 <span id="oneRm">--</span><small id="resultUnit">kg</small>
 </div>
-<div class="result-meta" id="resultMeta">중량과 횟수를 입력해 주세요.</div>
+
+<div class="result-meta" id="resultMeta">
+중량과 횟수를 입력해 주세요.
+</div>
+
 </section>
 
+<!-- 탭 -->
+
 <div class="tabs">
-<button type="button" class="active" data-tab="reps">횟수별</button>
-<button type="button" data-tab="percent">퍼센트별</button>
+
+<button type="button" class="active"
+data-tab="reps">횟수별</button>
+
+<button type="button"
+data-tab="percent">퍼센트별</button>
+
 </div>
 
 <div id="repsView" class="rep-grid"></div>
+
 <div id="percentView" class="percent-list" hidden></div>
 
+<!-- 계산 참고 -->
+
 <details>
+
 <summary>계산 방식 및 참고</summary>
+
 <div class="detail-content">
-<strong>종목별 (스쿼트 · 벤치프레스 · 데드리프트 · 오버헤드프레스)</strong>
-NSCA(National Strength and Conditioning Association) 운동별 환산 계수 적용(오버헤드프레스는 별도의 OHP 전용 계수표 적용)
+
+<strong>
+종목별 (스쿼트 · 벤치프레스 · 데드리프트 · 오버헤드프레스)
+</strong>
+
+NSCA(National Strength and Conditioning Association)
+운동별 환산 계수 적용
+(오버헤드프레스는 별도의 OHP 전용 계수표 적용)
 
 <strong>기타</strong>
-NSCA Training Load Chart의 반복 횟수별 비율 적용(11회 73%)
+
+NSCA Training Load Chart의 반복 횟수별 비율 적용
+(11회 73%)
+
 </div>
 </details>
 
+<!-- 안내 -->
+
 <div class="notice">
+
 <div class="notice-label">NOTICE</div>
+
 ※ 추정치이므로 실제 최대 중량과 차이가 있을 수 있습니다.<br>
 일반적으로 반복 횟수가 많아질수록 추정 오차가 커질 수 있습니다.<br>
 모든 중량은 선택한 단위로 반올림합니다.
+
 </div>
 
-<footer class="footer">BARBELLIAN 364+1</footer>
+<footer class="footer">
+BARBELLIAN 364+1
+</footer>
 
 </div>
 </main>
@@ -627,29 +822,53 @@ const repPercent=[
 ];
 
 const exerciseFactors={
- "스쿼트":[1,1.048,1.130,1.158,1.200,1.242,1.284,1.326,1.368,1.410,1.452,1.494],
- "벤치프레스":[1,1.035,1.080,1.115,1.150,1.180,1.220,1.255,1.290,1.325,1.360,1.395],
- "데드리프트":[1,1.065,1.130,1.147,1.164,1.181,1.198,1.220,1.232,1.240,1.252,1.264],
- "오버헤드프레스":[1,1.030,1.065,1.100,1.135,1.165,1.200,1.230,1.265,1.295,1.325,1.355]
+ "스쿼트":[
+  1,1.048,1.130,1.158,1.200,1.242,
+  1.284,1.326,1.368,1.410,1.452,1.494
+ ],
+
+ "벤치프레스":[
+  1,1.035,1.080,1.115,1.150,1.180,
+  1.220,1.255,1.290,1.325,1.360,1.395
+ ],
+
+ "데드리프트":[
+  1,1.065,1.130,1.147,1.164,1.181,
+  1.198,1.220,1.232,1.240,1.252,1.264
+ ],
+
+ "오버헤드프레스":[
+  1,1.030,1.065,1.100,1.135,1.165,
+  1.200,1.230,1.265,1.295,1.325,1.355
+ ]
 };
 
 function roundValue(value){
- return Math.round(value/state.round+Number.EPSILON)*state.round;
+ return Math.round(
+  value/state.round+Number.EPSILON
+ )*state.round;
 }
 
 function format(value){
  const n=roundValue(value);
+
  if(state.round===1){
   return String(Math.round(n));
  }
+
  return n.toFixed(1);
 }
 
 function displayFromKg(kg){
- return state.unit==="kg"?kg:kg*LB_PER_KG;
+ return state.unit==="kg"
+  ?kg
+  :kg*LB_PER_KG;
 }
 
+/* 입력 중량 저장 */
+
 function saveWeightInput(){
+
  const raw=$("weight").value.trim();
 
  if(raw===""){
@@ -668,25 +887,42 @@ function saveWeightInput(){
   return;
  }
 
- state.weightKg=state.unit==="kg"?value:value/LB_PER_KG;
+ state.weightKg=
+  state.unit==="kg"
+   ?value
+   :value/LB_PER_KG;
+
  state.weightSourceUnit=state.unit;
  state.weightSourceValue=raw;
 }
 
+/* kg / lb 변경 */
+
 function changeWeightUnit(next){
+
  if(next===state.unit)return;
 
  state.unit=next;
 
  if(state.weightKg!==null){
+
   let converted;
 
   if(next===state.weightSourceUnit){
+
    converted=state.weightSourceValue;
+
   }else if(next==="kg"){
+
    converted=String(state.weightKg);
+
   }else{
-   converted=String(Number((state.weightKg*LB_PER_KG).toFixed(4)));
+
+   converted=String(
+    Number(
+     (state.weightKg*LB_PER_KG).toFixed(4)
+    )
+   );
   }
 
   $("weight").value=converted;
@@ -696,171 +932,321 @@ function changeWeightUnit(next){
  render();
 }
 
+/* 선택 상태 */
+
 function setActive(){
- document.querySelectorAll("[data-exercise]").forEach(button=>{
-  const selected=button.dataset.exercise===state.exercise;
+
+ document.querySelectorAll("[data-exercise]")
+ .forEach(button=>{
+
+  const selected=
+   button.dataset.exercise===state.exercise;
+
   button.classList.toggle("active",selected);
-  button.setAttribute("aria-pressed",String(selected));
+  button.setAttribute(
+   "aria-pressed",String(selected)
+  );
  });
 
- document.querySelectorAll("[data-unit]").forEach(button=>{
-  const selected=button.dataset.unit===state.unit;
+ document.querySelectorAll("[data-unit]")
+ .forEach(button=>{
+
+  const selected=
+   button.dataset.unit===state.unit;
+
   button.classList.toggle("active",selected);
-  button.setAttribute("aria-pressed",String(selected));
+  button.setAttribute(
+   "aria-pressed",String(selected)
+  );
  });
 
- document.querySelectorAll("[data-round]").forEach(button=>{
+ document.querySelectorAll("[data-round]")
+ .forEach(button=>{
+
   const round=Number(button.dataset.round);
   const selected=round===state.round;
+
   button.classList.toggle("active",selected);
-  button.setAttribute("aria-pressed",String(selected));
-  button.textContent=button.dataset.round+state.unit;
+  button.setAttribute(
+   "aria-pressed",String(selected)
+  );
+
+  button.textContent=
+   button.dataset.round+state.unit;
  });
 
- document.querySelectorAll("[data-tab]").forEach(button=>{
-  const selected=button.dataset.tab===state.tab;
+ document.querySelectorAll("[data-tab]")
+ .forEach(button=>{
+
+  const selected=
+   button.dataset.tab===state.tab;
+
   button.classList.toggle("active",selected);
-  button.setAttribute("aria-pressed",String(selected));
+  button.setAttribute(
+   "aria-pressed",String(selected)
+  );
  });
 }
 
+/* 결과 계산 및 출력 */
+
 function render(){
+
  const rawW=$("weight").value.trim();
  const rawR=$("reps").value.trim();
+
  const w=Number(rawW);
  const r=Number(rawR);
 
- const validW=rawW!==""&&Number.isFinite(w)&&w>=0;
- const validR=rawR!==""&&isValidReps(rawR);
+ const validW=
+  rawW!==""&&Number.isFinite(w)&&w>=0;
+
+ const validR=
+  rawR!==""&&isValidReps(rawR)&&rawR!=="";
 
  $("weightUnit").textContent=state.unit;
  $("resultUnit").textContent=state.unit;
- $("repsView").hidden=state.tab!=="reps";
- $("percentView").hidden=state.tab!=="percent";
+
+ $("repsView").hidden=
+  state.tab!=="reps";
+
+ $("percentView").hidden=
+  state.tab!=="percent";
+
+ /* 입력값이 없거나 잘못된 경우 */
 
  if(!validW||!validR){
+
   $("oneRm").textContent="--";
-  $("resultMeta").textContent="중량과 횟수를 입력해 주세요.";
+
+  $("resultMeta").textContent=
+   "중량과 횟수를 입력해 주세요.";
+
   $("repsView").innerHTML="";
-  $("percentView").innerHTML='<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
+
+  $("percentView").innerHTML=
+   '<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
+
   return;
  }
 
- const weightKg=state.unit==="kg"?w:w/LB_PER_KG;
+ /* 1RM 계산 */
+
+ const weightKg=
+  state.unit==="kg"
+   ?w
+   :w/LB_PER_KG;
+
  let oneRmKg;
 
  if(r===1){
+
   oneRmKg=weightKg;
+
  }else if(state.exercise==="기타"){
-  oneRmKg=weightKg/(repPercent[r-1]/100);
+
+  oneRmKg=
+   weightKg/(repPercent[r-1]/100);
+
  }else{
-  oneRmKg=weightKg*exerciseFactors[state.exercise][r-1];
+
+  oneRmKg=
+   weightKg*exerciseFactors[state.exercise][r-1];
  }
 
  const oneRm=displayFromKg(oneRmKg);
+
  $("oneRm").textContent=format(oneRm);
- $("resultMeta").textContent=`${state.exercise} · ${rawW}${state.unit} × ${r}회`;
 
- const repResults=Array.from({length:12},(_,i)=>{
-  const targetReps=i+1;
-  const predicted=state.exercise==="기타"
-   ?oneRm*repPercent[i]/100
-   :oneRm/exerciseFactors[state.exercise][i];
+ $("resultMeta").textContent=
+  `${state.exercise} · ${rawW}${state.unit} × ${r}회`;
 
-  const percentage=oneRm===0?"0.0":(predicted/oneRm*100).toFixed(1);
-  const formatted=format(predicted);
-  const numberClass=formatted.includes(".")?"decimal":"";
-  const matchClass=targetReps===r?"input-match":"";
+ /* 횟수별 결과 */
 
-  return `
-   <div class="rep-card ${matchClass}">
-    <div class="rep-title">${targetReps}RM (${percentage}%)</div>
-    <div class="rep-number ${numberClass}">
-     ${formatted}<small>${state.unit}</small>
+ const repResults=
+  Array.from({length:12},(_,i)=>{
+
+   const targetReps=i+1;
+
+   const predicted=
+    state.exercise==="기타"
+     ?oneRm*repPercent[i]/100
+     :oneRm/exerciseFactors[state.exercise][i];
+
+   const percentage=
+    oneRm===0
+     ?"0.0"
+     :(predicted/oneRm*100).toFixed(1);
+
+   const formatted=format(predicted);
+
+   const numberClass=
+    formatted.includes(".")?"decimal":"";
+
+   const matchClass=
+    targetReps===r?"input-match":"";
+
+   return `
+    <div class="rep-card ${matchClass}">
+
+     <div class="rep-title">
+      ${targetReps}RM (${percentage}%)
+     </div>
+
+     <div class="rep-number ${numberClass}">
+      ${formatted}<small>${state.unit}</small>
+     </div>
+
     </div>
-   </div>
-  `;
- });
+   `;
+  });
 
- $("repsView").innerHTML=repResults.join("");
+ $("repsView").innerHTML=
+  repResults.join("");
 
- document.querySelectorAll(".rep-number").forEach(el=>{
-  const baseSize=parseFloat(getComputedStyle(el).fontSize);
+ /* 횟수별 숫자 넘침 방지 */
+
+ document.querySelectorAll(".rep-number")
+ .forEach(el=>{
+
+  const baseSize=
+   parseFloat(getComputedStyle(el).fontSize);
+
   let size=baseSize;
+
   el.style.fontSize=size+"px";
 
-  while(el.scrollWidth>el.clientWidth&&size>10){
+  while(
+   el.scrollWidth>el.clientWidth&&size>10
+  ){
+
    size-=0.5;
    el.style.fontSize=size+"px";
   }
  });
 
- const percentRows=[120,115,110,105,100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5];
+ /* 퍼센트별 결과 */
 
- $("percentView").innerHTML=percentRows.map(pct=>{
-  const predicted=oneRm*pct/100;
+ const percentRows=[
+  120,115,110,105,100,95,90,85,
+  80,75,70,65,60,55,50,45,
+  40,35,30,25,20,15,10,5
+ ];
 
-  return `
-   <div class="percent-row ${pct===100?"highlight":""}">
-    <span>${pct}%</span>
-    <span class="percent-result">
-     ${format(predicted)}<small>${state.unit}</small>
-    </span>
-   </div>
-  `;
- }).join("");
+ $("percentView").innerHTML=
+  percentRows.map(pct=>{
+
+   const predicted=oneRm*pct/100;
+
+   return `
+    <div class="percent-row ${pct===100?"highlight":""}">
+
+     <span>${pct}%</span>
+
+     <span class="percent-result">
+      ${format(predicted)}<small>${state.unit}</small>
+     </span>
+
+    </div>
+   `;
+  }).join("");
 }
 
-document.querySelectorAll("[data-exercise]").forEach(button=>{
+/* 종목 선택 */
+
+document.querySelectorAll("[data-exercise]")
+.forEach(button=>{
+
  button.addEventListener("click",()=>{
+
   state.exercise=button.dataset.exercise;
+
   setActive();
   render();
  });
 });
 
-document.querySelectorAll("[data-unit]").forEach(button=>{
+/* 단위 선택 */
+
+document.querySelectorAll("[data-unit]")
+.forEach(button=>{
+
  button.addEventListener("click",()=>{
+
   changeWeightUnit(button.dataset.unit);
  });
 });
 
-document.querySelectorAll("[data-round]").forEach(button=>{
+/* 반올림 단위 선택 */
+
+document.querySelectorAll("[data-round]")
+.forEach(button=>{
+
  button.addEventListener("click",()=>{
+
   state.round=Number(button.dataset.round);
+
   setActive();
   render();
  });
 });
 
-document.querySelectorAll("[data-tab]").forEach(button=>{
+/* 탭 선택 */
+
+document.querySelectorAll("[data-tab]")
+.forEach(button=>{
+
  button.addEventListener("click",()=>{
+
   state.tab=button.dataset.tab;
+
   setActive();
   render();
  });
 });
+
+/* 중량 입력 */
 
 $("weight").addEventListener("input",()=>{
+
  saveWeightInput();
  render();
 });
 
+/* 횟수 입력 제한 */
+
 $("reps").addEventListener("beforeinput",event=>{
- if(event.inputType&&event.inputType.startsWith("delete"))return;
+
+ if(
+  event.inputType&&
+  event.inputType.startsWith("delete")
+ ){
+  return;
+ }
 
  const input=$("reps");
+
  let inserted=event.data;
 
- if(inserted===null&&event.inputType==="insertFromPaste"&&event.dataTransfer){
-  inserted=event.dataTransfer.getData("text");
+ if(
+  inserted===null&&
+  event.inputType==="insertFromPaste"&&
+  event.dataTransfer
+ ){
+
+  inserted=
+   event.dataTransfer.getData("text");
  }
 
  if(inserted===null)return;
 
  const start=input.selectionStart;
  const end=input.selectionEnd;
- const candidate=input.value.slice(0,start)+inserted+input.value.slice(end);
+
+ const candidate=
+  input.value.slice(0,start)+
+  inserted+
+  input.value.slice(end);
 
  if(!isValidReps(candidate)){
   event.preventDefault();
@@ -868,17 +1254,23 @@ $("reps").addEventListener("beforeinput",event=>{
 });
 
 $("reps").addEventListener("input",()=>{
+
  const input=$("reps");
  const value=input.value;
 
  if(isValidReps(value)){
+
   lastValidReps=value;
+
  }else{
+
   input.value=lastValidReps;
  }
 
  render();
 });
+
+/* 초기 실행 */
 
 setActive();
 render();
@@ -888,8 +1280,13 @@ render();
 
 <script>
 if("serviceWorker" in navigator){
+
  window.addEventListener("load",()=>{
-  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+
+  navigator.serviceWorker
+   .register("./sw.js")
+   .catch(()=>{});
+
  });
 }
 </script>
