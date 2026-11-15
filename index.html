@@ -840,8 +840,10 @@ function isValidWeight(value){
    ?Math.max(normalLimit,state.convertedIntegerLimit)
    :normalLimit;
 
+ // 첫 글자는 반드시 숫자여야 함.
+ // 따라서 .4 입력 및 붙여넣기 차단.
  const pattern=new RegExp(
-  "^\\d{0,"+integerLimit+"}(?:\\.\\d{0,4})?$"
+  "^\\d{1,"+integerLimit+"}(?:\\.\\d{0,4})?$"
  );
 
  return pattern.test(value);
