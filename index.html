@@ -21,13 +21,11 @@
 
 *{
  box-sizing:border-box;
- touch-action:manipulation;
 }
 
 html{
  -webkit-text-size-adjust:100%;
  text-size-adjust:100%;
- touch-action:manipulation;
 }
 
 body{
@@ -274,6 +272,12 @@ input{
  min-width:0;
  background:#fff;
  color:#111;
+
+ /* 기본 텍스트 편집 및 스캔 기능 허용 */
+ touch-action:auto;
+ user-select:text;
+ -webkit-user-select:text;
+ -webkit-touch-callout:default;
 }
 
 input:focus{
@@ -491,8 +495,6 @@ details[open] summary:after{content:"－";}
  margin:9px 0 2px;
 }
 
-/* 기타와 문의 및 피드백 사이 구분선 */
-
 .detail-divider{
  height:1px;
  background:#d5d5d5;
@@ -523,8 +525,6 @@ details[open] summary:after{content:"－";}
  font-weight:900;
  margin-bottom:5px;
 }
-
-/* SNS 링크 및 하단 브랜드 */
 
 .footer{
  margin-top:22px;
@@ -699,10 +699,11 @@ data-round="0.1">0.1kg</button>
 <input
 id="weight"
 type="text"
-min="0"
 inputmode="decimal"
 enterkeyhint="done"
 autocomplete="off"
+autocapitalize="off"
+spellcheck="false"
 placeholder="중량 입력"
 >
 </div>
@@ -1189,33 +1190,91 @@ document.querySelectorAll("[data-tab]")
  });
 });
 
-/* 중량 입력칸 커서를 항상 숫자 맨 뒤로 이동 */
+/*
+ 중량 입력 커서 제어
 
-function moveWeightCaretToEnd(){
+ 일반 터치:
+ 커서를 숫자 맨 뒤로 이동
 
- const input=$("weight");
- const length=input.value.length;
+ 누른 채 드래그:
+ 브라우저 기본 커서 이동 허용
 
- input.setSelectionRange(length,length);
-}
+ 길게 누르기:
+ 기본 텍스트 선택 메뉴 허용
 
-$("weight").addEventListener("focus",()=>{
+ 복사 / 붙여넣기 / 스캔:
+ 기본 브라우저 기능 유지
+*/
 
- requestAnimationFrame(()=>{
-  moveWeightCaretToEnd();
- });
+const weightInput=$("weight");
+
+let weightPointer=null;
+
+weightInput.addEventListener("pointerdown",event=>{
+
+ if(!event.isPrimary)return;
+
+ weightPointer={
+  x:event.clientX,
+  y:event.clientY,
+  time:Date.now(),
+  moved:false
+ };
 
 });
 
-$("weight").addEventListener("click",()=>{
+weightInput.addEventListener("pointermove",event=>{
 
- moveWeightCaretToEnd();
+ if(!weightPointer)return;
 
+ const dx=event.clientX-weightPointer.x;
+ const dy=event.clientY-weightPointer.y;
+
+ if(Math.hypot(dx,dy)>6){
+  weightPointer.moved=true;
+ }
+
+});
+
+weightInput.addEventListener("pointerup",()=>{
+
+ if(!weightPointer)return;
+
+ const elapsed=Date.now()-weightPointer.time;
+ const moved=weightPointer.moved;
+
+ weightPointer=null;
+
+ /*
+ 짧은 일반 터치만 맨 뒤로 이동.
+ 길게 누르기와 드래그는 기본 동작 유지.
+ */
+
+ if(!moved&&elapsed<450){
+
+  requestAnimationFrame(()=>{
+
+   if(document.activeElement!==weightInput)return;
+
+   const length=weightInput.value.length;
+
+   try{
+    weightInput.setSelectionRange(length,length);
+   }catch(error){}
+
+  });
+
+ }
+
+});
+
+weightInput.addEventListener("pointercancel",()=>{
+ weightPointer=null;
 });
 
 /* 0 뒤에는 소수점만 입력 허용 */
 
-$("weight").addEventListener("beforeinput",event=>{
+weightInput.addEventListener("beforeinput",event=>{
 
  if(
   event.inputType&&
@@ -1224,7 +1283,7 @@ $("weight").addEventListener("beforeinput",event=>{
   return;
  }
 
- const input=$("weight");
+ const input=weightInput;
 
  let inserted=event.data;
 
@@ -1244,8 +1303,6 @@ $("weight").addEventListener("beforeinput",event=>{
 
  const current=input.value;
 
- /* 입력값이 0이고 뒤에 숫자를 입력하려는 경우 차단 */
-
  if(
   current==="0"&&
   start===current.length&&
@@ -1260,7 +1317,7 @@ $("weight").addEventListener("beforeinput",event=>{
 
 /* 중량 입력값 저장 및 결과 갱신 */
 
-$("weight").addEventListener("input",()=>{
+weightInput.addEventListener("input",()=>{
  saveWeightInput();
  render();
 });
@@ -1346,7 +1403,7 @@ $("reps").addEventListener("input",()=>{
 });
 
 /* 빈 공간과 결과 상자 등의 더블탭 확대 방지
-   버튼과 입력 요소의 기본 동작은 유지 */
+   입력 요소의 기본 텍스트 편집 동작은 유지 */
 
 let lastTouchEnd=0;
 
