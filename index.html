@@ -1213,6 +1213,53 @@ $("weight").addEventListener("click",()=>{
 
 });
 
+/* 0 뒤에는 소수점만 입력 허용 */
+
+$("weight").addEventListener("beforeinput",event=>{
+
+ if(
+  event.inputType&&
+  event.inputType.startsWith("delete")
+ ){
+  return;
+ }
+
+ const input=$("weight");
+
+ let inserted=event.data;
+
+ if(
+  inserted===null&&
+  event.inputType==="insertFromPaste"&&
+  event.dataTransfer
+ ){
+  inserted=
+   event.dataTransfer.getData("text");
+ }
+
+ if(inserted===null)return;
+
+ const start=input.selectionStart;
+ const end=input.selectionEnd;
+
+ const current=input.value;
+
+ /* 입력값이 0이고 뒤에 숫자를 입력하려는 경우 차단 */
+
+ if(
+  current==="0"&&
+  start===current.length&&
+  end===current.length&&
+  /^[0-9]/.test(inserted)
+ ){
+  event.preventDefault();
+  return;
+ }
+
+});
+
+/* 중량 입력값 저장 및 결과 갱신 */
+
 $("weight").addEventListener("input",()=>{
  saveWeightInput();
  render();
