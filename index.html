@@ -811,9 +811,10 @@ const state={
  unit:"kg",
  round:1,
  tab:"reps",
+ weightKg:null,
 
- // 내부 계산용 원본 중량은 항상 kg 기준으로 보관
- weightKg:null
+ // 변환된 숫자는 직접 입력 제한을 적용하지 않음
+ weightIsConverted:false
 };
 
 const LB_PER_KG=2.2046226218;
@@ -821,25 +822,12 @@ const LB_PER_KG=2.2046226218;
 let lastValidReps="";
 let lastValidWeight="";
 
-/*
- 중량 직접 입력 제한
-
- kg:
- 정수부 최대 4자리
- 소수부 최대 4자리
-
- lb:
- 정수부 최대 5자리
- 소수부 최대 4자리
-*/
-
 function isValidWeight(value,unit=state.unit){
 
  if(value==="")return true;
 
  const integerLimit=unit==="kg"?4:5;
 
- // 수정: 정규식의 역슬래시 이스케이프 오류 해결
  const pattern=new RegExp(
   "^\\d{0,"+integerLimit+"}(?:\\.\\d{0,4})?$"
  );
@@ -896,27 +884,12 @@ function displayFromKg(kg){
   :kg*LB_PER_KG;
 }
 
-/*
- 단위 변환 결과의 화면 표시
-
- 소수점 아래 최대 4자리.
- 5번째 자리에서 반올림.
-
- 이 함수는 화면 표시만 담당하며
- 내부 원본 중량을 변경하지 않음.
-*/
-
 function formatConvertedWeight(value){
 
  if(!Number.isFinite(value))return "";
 
  return Number(value.toFixed(4)).toString();
 }
-
-/*
- 사용자가 직접 입력한 중량을
- 내부 기준인 kg로 저장.
-*/
 
 function saveWeightInput(){
 
@@ -943,8 +916,8 @@ function saveWeightInput(){
 /*
  단위 변경
 
- 내부 원본 kg 값은 절대 변경하지 않음.
- 화면에 표시할 숫자만 변환.
+ 변환 결과에는 직접 입력 제한을 적용하지 않음.
+ 변환 결과는 이후에도 자유롭게 수정 가능.
 */
 
 function changeWeightUnit(next){
@@ -967,8 +940,12 @@ function changeWeightUnit(next){
   $("weight").value=
    formatConvertedWeight(converted);
 
+  // 변환 결과이므로 입력 제한 해제
+  state.weightIsConverted=true;
+
  }else{
   $("weight").value="";
+  state.weightIsConverted=false;
  }
 
  lastValidWeight=$("weight").value;
@@ -978,13 +955,15 @@ function changeWeightUnit(next){
 }
 
 /*
- 중량 입력 제한
+ 직접 입력 제한
 
- 키보드 입력, 붙여넣기,
- 선택 영역 교체 등에 적용.
+ 변환 결과를 편집하는 동안에는 제한을 적용하지 않음.
 */
 
 $("weight").addEventListener("beforeinput",event=>{
+
+ // 변환 결과는 백스페이스, 숫자 수정 모두 허용
+ if(state.weightIsConverted)return;
 
  if(
   event.inputType&&
@@ -1031,13 +1010,27 @@ $("weight").addEventListener("input",()=>{
  const input=$("weight");
  const value=input.value;
 
- if(!isValidWeight(value)){
+ if(state.weightIsConverted){
 
-  input.value=lastValidWeight;
+  // 변환 결과는 입력 제한 없이 그대로 수용
+  lastValidWeight=value;
+
+  // 완전히 지우면 새로운 직접 입력 모드로 전환
+  if(value===""){
+   state.weightIsConverted=false;
+  }
 
  }else{
 
-  lastValidWeight=value;
+  // 직접 입력일 때만 자리수 제한 적용
+  if(!isValidWeight(value)){
+
+   input.value=lastValidWeight;
+
+  }else{
+
+   lastValidWeight=value;
+  }
  }
 
  saveWeightInput();
@@ -1133,7 +1126,6 @@ function render(){
   return;
  }
 
- // 내부 원본 kg 값으로 계산
  const weightKg=state.weightKg;
 
  let oneRmKg;
@@ -1270,16 +1262,8 @@ document.querySelectorAll("[data-tab]")
 });
 
 /*
- 중량 입력 커서 동작
-
- 최초 포커스:
- 커서를 입력값의 가장 뒤로 이동.
-
- 이미 입력 중인 상태에서 다시 터치:
- 브라우저 기본 커서 위치 지정 기능을 그대로 사용.
-
- 커서 드래그, 텍스트 선택, 복사, 붙여넣기:
- 브라우저와 운영체제의 기본 기능 사용.
+ 최초 포커스 시 커서를 끝으로 이동.
+ 이후 편집 및 선택은 기본 동작 유지.
 */
 
 $("weight").addEventListener("focus",()=>{
@@ -1298,8 +1282,6 @@ $("weight").addEventListener("focus",()=>{
 
 });
 
-/* 키보드 완료 버튼을 누르면 입력을 마치고 키보드 닫기 */
-
 ["weight","reps"].forEach(id=>{
 
  $(id).addEventListener("keydown",event=>{
@@ -1315,8 +1297,6 @@ $("weight").addEventListener("focus",()=>{
 
 });
 
-/* 횟수 입력칸에 포커스하면 기존 숫자 지우기 */
-
 $("reps").addEventListener("focus",()=>{
 
  $("reps").value="";
@@ -1324,8 +1304,6 @@ $("reps").addEventListener("focus",()=>{
 
  render();
 });
-
-/* 횟수 입력 제한 */
 
 $("reps").addEventListener("beforeinput",event=>{
 
@@ -1377,11 +1355,6 @@ $("reps").addEventListener("input",()=>{
 
  render();
 });
-
-/*
- 빈 공간과 결과 상자 등의 더블탭 확대 방지.
- 입력칸과 버튼, 링크 등의 기본 동작은 유지.
-*/
 
 let lastTouchEnd=0;
 
