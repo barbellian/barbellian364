@@ -19,9 +19,7 @@
  --white:#fff;
 }
 
-*{
- box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 html{
  -webkit-text-size-adjust:100%;
@@ -37,14 +35,8 @@ body{
  Roboto,"Malgun Gothic",Arial,sans-serif;
 }
 
-button,input{
- font-family:inherit;
-}
-
-button{
- -webkit-appearance:none;
- appearance:none;
-}
+button,input{font-family:inherit;}
+button{-webkit-appearance:none;appearance:none;}
 
 main{
  max-width:620px;
@@ -109,8 +101,6 @@ h1{
  margin-left:5px;
 }
 
-/* 표시 단위 */
-
 .unit-control{
  display:flex;
  flex-direction:column;
@@ -150,8 +140,6 @@ h1{
  color:#fff;
 }
 
-/* 공통 제목 */
-
 .section-title{
  font-size:19px;
  font-weight:800;
@@ -165,11 +153,7 @@ h1{
  font-size:21px;
 }
 
-/* 종목 선택 */
-
-.exercise-wrap{
- position:relative;
-}
+.exercise-wrap{position:relative;}
 
 .exercise{
  display:grid;
@@ -197,8 +181,6 @@ h1{
  border-color:#111;
 }
 
-/* 산출 중량 제목 + 표시 단위 */
-
 .rounding-header{
  display:flex;
  align-items:center;
@@ -221,8 +203,6 @@ h1{
  width:68px;
  min-width:68px;
 }
-
-/* 산출 중량 단위 */
 
 .segment{
  display:flex;
@@ -261,8 +241,6 @@ h1{
  margin:4px 0 0;
  padding-left:5px;
 }
-
-/* 입력 영역 */
 
 .fields{
  display:grid;
@@ -307,8 +285,6 @@ input:focus{
  padding-top:5px;
 }
 
-/* 결과 */
-
 .result{
  background:#111;
  color:#fff;
@@ -345,8 +321,6 @@ input:focus{
  margin-top:8px;
 }
 
-/* 탭 */
-
 .tabs{
  display:flex;
  background:#ededed;
@@ -373,8 +347,6 @@ input:focus{
  background:#606060;
  color:#fff;
 }
-
-/* 횟수별 */
 
 .rep-grid{
  display:grid;
@@ -423,8 +395,6 @@ input:focus{
  margin-left:.12em;
 }
 
-/* 퍼센트별 */
-
 .percent-list{
  display:flex;
  flex-direction:column;
@@ -462,11 +432,7 @@ input:focus{
  margin-left:3px;
 }
 
-[hidden]{
- display:none!important;
-}
-
-/* 계산 참고 */
+[hidden]{display:none!important;}
 
 details{
  border-top:1px solid #333;
@@ -484,18 +450,9 @@ summary{
  cursor:pointer;
 }
 
-summary::-webkit-details-marker{
- display:none;
-}
-
-summary:after{
- content:"＋";
- font-size:18px;
-}
-
-details[open] summary:after{
- content:"－";
-}
+summary::-webkit-details-marker{display:none;}
+summary:after{content:"＋";font-size:18px;}
+details[open] summary:after{content:"－";}
 
 .detail-content{
  font-size:12px;
@@ -509,8 +466,6 @@ details[open] summary:after{
  color:#111;
  margin:9px 0 2px;
 }
-
-/* 안내 */
 
 .notice{
  border-top:1px solid #ddd;
@@ -539,10 +494,7 @@ details[open] summary:after{
  letter-spacing:.07em;
 }
 
-/* 작은 화면 */
-
 @media(max-width:380px){
-
  main{
   padding-left:10px;
   padding-right:10px;
@@ -553,17 +505,9 @@ details[open] summary:after{
   padding-right:14px;
  }
 
- .choice{
-  font-size:14px;
- }
-
- .rounding-header{
-  gap:7px;
- }
-
- .rounding-header .section-title{
-  font-size:21px;
- }
+ .choice{font-size:14px;}
+ .rounding-header{gap:7px;}
+ .rounding-header .section-title{font-size:21px;}
 
  .unit-control,
  .rounding-header .unit-control{
@@ -576,28 +520,14 @@ details[open] summary:after{
   padding:5px 0;
  }
 
- .segment button{
-  font-size:13px;
- }
-
- .rep-grid{
-  gap:7px;
- }
+ .segment button{font-size:13px;}
+ .rep-grid{gap:7px;}
 }
 
 @media(min-width:500px){
-
- main{
-  padding-top:28px;
- }
-
- .shell{
-  padding:23px;
- }
-
- .rep-card{
-  padding:16px 5px;
- }
+ main{padding-top:28px;}
+ .shell{padding:23px;}
+ .rep-card{padding:16px 5px;}
 }
 </style>
 </head>
@@ -643,8 +573,6 @@ data-exercise="기타">기타</button>
 </div>
 </div>
 
-<!-- 산출 중량 제목 + 표시 단위 -->
-
 <div class="rounding-header">
 
 <div class="section-title">
@@ -652,7 +580,6 @@ data-exercise="기타">기타</button>
 </div>
 
 <div class="unit-control">
-
 <div class="unit-switch" id="units">
 
 <button type="button" class="active"
@@ -664,8 +591,6 @@ data-unit="lb">lb</button>
 </div>
 </div>
 </div>
-
-<!-- 산출 중량 단위 선택 -->
 
 <div class="segment" id="rounding">
 
@@ -683,8 +608,6 @@ data-round="0.1">0.1kg</button>
 <p class="hint">
 선택한 단위로 모든 산출 중량을 반올림합니다.
 </p>
-
-<!-- 입력 영역 -->
 
 <div class="fields">
 
@@ -718,8 +641,6 @@ placeholder="횟수 입력"
 
 </div>
 
-<!-- 결과 -->
-
 <section class="result" aria-live="polite">
 
 <div class="result-kicker">ESTIMATED 1RM</div>
@@ -734,8 +655,6 @@ placeholder="횟수 입력"
 
 </section>
 
-<!-- 탭 -->
-
 <div class="tabs">
 
 <button type="button" class="active"
@@ -747,14 +666,9 @@ data-tab="percent">퍼센트별</button>
 </div>
 
 <div id="repsView" class="rep-grid"></div>
-
 <div id="percentView" class="percent-list" hidden></div>
 
-<!-- 계산 참고 -->
-
-
 <details>
-
 <summary>계산 방식</summary>
 
 <div class="detail-content">
@@ -771,8 +685,6 @@ NSCA(미국 체력관리학회) Training Load Chart를 기반으로 한 반복 �
 
 </div>
 </details>
-
-<!-- 안내 -->
 
 <div class="notice">
 
@@ -823,17 +735,14 @@ const exerciseFactors={
   1,1.048,1.130,1.158,1.200,1.242,
   1.284,1.326,1.368,1.410,1.452,1.494
  ],
-
  "벤치프레스":[
   1,1.035,1.080,1.115,1.150,1.180,
   1.220,1.255,1.290,1.325,1.360,1.395
  ],
-
  "데드리프트":[
   1,1.065,1.130,1.147,1.164,1.181,
   1.198,1.220,1.232,1.240,1.252,1.264
  ],
-
  "오버헤드프레스":[
   1,1.030,1.065,1.100,1.135,1.165,
   1.200,1.230,1.265,1.295,1.325,1.355
@@ -861,8 +770,6 @@ function displayFromKg(kg){
   ?kg
   :kg*LB_PER_KG;
 }
-
-/* 입력 중량 저장 */
 
 function saveWeightInput(){
 
@@ -893,8 +800,6 @@ function saveWeightInput(){
  state.weightSourceValue=raw;
 }
 
-/* kg / lb 변경 */
-
 function changeWeightUnit(next){
 
  if(next===state.unit)return;
@@ -906,15 +811,10 @@ function changeWeightUnit(next){
   let converted;
 
   if(next===state.weightSourceUnit){
-
    converted=state.weightSourceValue;
-
   }else if(next==="kg"){
-
    converted=String(state.weightKg);
-
   }else{
-
    converted=String(
     Number(
      (state.weightKg*LB_PER_KG).toFixed(4)
@@ -928,8 +828,6 @@ function changeWeightUnit(next){
  setActive();
  render();
 }
-
-/* 선택 상태 */
 
 function setActive(){
 
@@ -985,8 +883,6 @@ function setActive(){
  });
 }
 
-/* 결과 계산 및 출력 */
-
 function render(){
 
  const rawW=$("weight").value.trim();
@@ -1010,8 +906,6 @@ function render(){
  $("percentView").hidden=
   state.tab!=="percent";
 
- /* 입력값이 없거나 잘못된 경우 */
-
  if(!validW||!validR){
 
   $("oneRm").textContent="--";
@@ -1027,8 +921,6 @@ function render(){
   return;
  }
 
- /* 1RM 계산 */
-
  const weightKg=
   state.unit==="kg"
    ?w
@@ -1037,16 +929,11 @@ function render(){
  let oneRmKg;
 
  if(r===1){
-
   oneRmKg=weightKg;
-
  }else if(state.exercise==="기타"){
-
   oneRmKg=
    weightKg/(repPercent[r-1]/100);
-
  }else{
-
   oneRmKg=
    weightKg*exerciseFactors[state.exercise][r-1];
  }
@@ -1057,8 +944,6 @@ function render(){
 
  $("resultMeta").textContent=
   `${state.exercise} · ${rawW}${state.unit} × ${r}회`;
-
- /* 횟수별 결과 */
 
  const repResults=
   Array.from({length:12},(_,i)=>{
@@ -1085,23 +970,18 @@ function render(){
 
    return `
     <div class="rep-card ${matchClass}">
-
      <div class="rep-title">
       ${targetReps}RM (${percentage}%)
      </div>
-
      <div class="rep-number ${numberClass}">
       ${formatted}<small>${state.unit}</small>
      </div>
-
     </div>
    `;
   });
 
  $("repsView").innerHTML=
   repResults.join("");
-
- /* 횟수별 숫자 넘침 방지 */
 
  document.querySelectorAll(".rep-number")
  .forEach(el=>{
@@ -1116,13 +996,10 @@ function render(){
   while(
    el.scrollWidth>el.clientWidth&&size>10
   ){
-
    size-=0.5;
    el.style.fontSize=size+"px";
   }
  });
-
- /* 퍼센트별 결과 */
 
  const percentRows=[
   120,115,110,105,100,95,90,85,
@@ -1137,76 +1014,61 @@ function render(){
 
    return `
     <div class="percent-row ${pct===100?"highlight":""}">
-
      <span>${pct}%</span>
-
      <span class="percent-result">
       ${format(predicted)}<small>${state.unit}</small>
      </span>
-
     </div>
    `;
   }).join("");
 }
 
-/* 종목 선택 */
-
 document.querySelectorAll("[data-exercise]")
 .forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   state.exercise=button.dataset.exercise;
-
   setActive();
   render();
  });
 });
 
-/* 단위 선택 */
-
 document.querySelectorAll("[data-unit]")
 .forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   changeWeightUnit(button.dataset.unit);
  });
 });
 
-/* 반올림 단위 선택 */
-
 document.querySelectorAll("[data-round]")
 .forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   state.round=Number(button.dataset.round);
-
   setActive();
   render();
  });
 });
-
-/* 탭 선택 */
 
 document.querySelectorAll("[data-tab]")
 .forEach(button=>{
-
  button.addEventListener("click",()=>{
-
   state.tab=button.dataset.tab;
-
   setActive();
   render();
  });
 });
 
-/* 중량 입력 */
-
 $("weight").addEventListener("input",()=>{
-
  saveWeightInput();
+ render();
+});
+
+/* 횟수 입력칸에 포커스하면 기존 숫자 지우기 */
+
+$("reps").addEventListener("focus",()=>{
+
+ $("reps").value="";
+ lastValidReps="";
+
  render();
 });
 
@@ -1230,7 +1092,6 @@ $("reps").addEventListener("beforeinput",event=>{
   event.inputType==="insertFromPaste"&&
   event.dataTransfer
  ){
-
   inserted=
    event.dataTransfer.getData("text");
  }
@@ -1256,18 +1117,13 @@ $("reps").addEventListener("input",()=>{
  const value=input.value;
 
  if(isValidReps(value)){
-
   lastValidReps=value;
-
  }else{
-
   input.value=lastValidReps;
  }
 
  render();
 });
-
-/* 초기 실행 */
 
 setActive();
 render();
