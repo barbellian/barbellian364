@@ -185,13 +185,13 @@ h1{
  border-color:#111;
 }
 
-/* 산출 중량 단위와 kg/lb 선택 영역 중심 정렬 */
+/* 산출 중량 단위와 kg/lb 간격 수정 */
 
 .rounding-header{
  display:flex;
  align-items:center;
  justify-content:flex-start;
- gap:3px;
+ gap:0;
  margin-top:16px;
  margin-bottom:3px;
  position:relative;
@@ -216,6 +216,7 @@ h1{
  width:68px;
  min-width:68px;
  height:34px;
+ margin-left:-5px;
 }
 
 .rounding-header .unit-switch{
@@ -599,13 +600,24 @@ details[open] summary:after{content:"－";}
  }
 
  .choice{font-size:14px;}
- .rounding-header{gap:7px;}
- .rounding-header .section-title{font-size:21px;}
+
+ /* 기존 gap:7px 덮어쓰기 제거 */
+ .rounding-header{
+  gap:0;
+ }
+
+ .rounding-header .section-title{
+  font-size:21px;
+ }
 
  .unit-control,
  .rounding-header .unit-control{
   width:66px;
   min-width:66px;
+ }
+
+ .rounding-header .unit-control{
+  margin-left:5px;
  }
 
  .unit-switch button{
