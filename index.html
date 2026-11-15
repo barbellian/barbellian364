@@ -19,7 +19,10 @@
  --white:#fff;
 }
 
-*{box-sizing:border-box;}
+*{
+ box-sizing:border-box;
+ touch-action:manipulation;
+}
 
 html{
  -webkit-text-size-adjust:100%;
@@ -1168,6 +1171,34 @@ $("reps").addEventListener("input",()=>{
 
  render();
 });
+
+/* 빈 공간과 결과 상자 등의 더블탭 확대 방지
+   버튼과 입력 요소의 기본 동작은 유지 */
+
+let lastTouchEnd=0;
+
+document.addEventListener("touchend",event=>{
+
+ const target=event.target;
+
+ if(
+  target.closest(
+   "button, input, select, textarea, a, label, summary"
+  )
+ ){
+  lastTouchEnd=0;
+  return;
+ }
+
+ const now=Date.now();
+
+ if(now-lastTouchEnd<=300){
+  event.preventDefault();
+ }
+
+ lastTouchEnd=now;
+
+},{passive:false});
 
 setActive();
 render();
