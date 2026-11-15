@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ko">
 <head>
@@ -813,8 +812,9 @@ const state={
  tab:"reps",
  weightKg:null,
 
- // 변환된 숫자는 직접 입력 제한을 적용하지 않음
- weightIsConverted:false
+ // 변환 결과의 기존 자릿수만 임시 허용
+ weightIsConverted:false,
+ convertedIntegerLimit:0
 };
 
 const LB_PER_KG=2.2046226218;
@@ -822,11 +822,21 @@ const LB_PER_KG=2.2046226218;
 let lastValidReps="";
 let lastValidWeight="";
 
-function isValidWeight(value,unit=state.unit){
+function integerDigits(value){
+ const integerPart=value.split(".")[0];
+ return integerPart.length;
+}
+
+function isValidWeight(value){
 
  if(value==="")return true;
 
- const integerLimit=unit==="kg"?4:5;
+ const normalLimit=state.unit==="kg"?4:5;
+
+ const integerLimit=
+  state.weightIsConverted
+   ?Math.max(normalLimit,state.convertedIntegerLimit)
+   :normalLimit;
 
  const pattern=new RegExp(
   "^\\d{0,"+integerLimit+"}(?:\\.\\d{0,4})?$"
@@ -885,9 +895,7 @@ function displayFromKg(kg){
 }
 
 function formatConvertedWeight(value){
-
  if(!Number.isFinite(value))return "";
-
  return Number(value.toFixed(4)).toString();
 }
 
@@ -914,11 +922,28 @@ function saveWeightInput(){
 }
 
 /*
- 단위 변경
+ 변환 결과 자릿수 제한 관리
 
- 변환 결과에는 직접 입력 제한을 적용하지 않음.
- 변환 결과는 이후에도 자유롭게 수정 가능.
+ 변환 직후 기존 정수 자릿수는 유지.
+ 기존 자릿수를 초과하는 숫자 추가는 차단.
+
+ 정수부가 일반 입력 제한 이하로 줄어들면
+ 즉시 일반 입력 제한으로 복귀.
 */
+
+function updateConvertedLimit(value){
+
+ if(!state.weightIsConverted)return;
+
+ const digits=integerDigits(value);
+ const normalLimit=state.unit==="kg"?4:5;
+
+ if(digits<=normalLimit){
+
+  state.weightIsConverted=false;
+  state.convertedIntegerLimit=0;
+ }
+}
 
 function changeWeightUnit(next){
 
@@ -937,15 +962,24 @@ function changeWeightUnit(next){
     ?state.weightKg
     :state.weightKg*LB_PER_KG;
 
-  $("weight").value=
+  const convertedText=
    formatConvertedWeight(converted);
 
-  // 변환 결과이므로 입력 제한 해제
-  state.weightIsConverted=true;
+  $("weight").value=convertedText;
+
+  const normalLimit=next==="kg"?4:5;
+  const digits=integerDigits(convertedText);
+
+  state.weightIsConverted=digits>normalLimit;
+
+  state.convertedIntegerLimit=
+   state.weightIsConverted?digits:0;
 
  }else{
+
   $("weight").value="";
   state.weightIsConverted=false;
+  state.convertedIntegerLimit=0;
  }
 
  lastValidWeight=$("weight").value;
@@ -955,15 +989,14 @@ function changeWeightUnit(next){
 }
 
 /*
- 직접 입력 제한
+ 중량 입력 전 제한
 
- 변환 결과를 편집하는 동안에는 제한을 적용하지 않음.
+ 삭제는 허용.
+ 숫자 추가 및 선택 영역 교체는
+ 변경 후 결과를 기준으로 검사.
 */
 
 $("weight").addEventListener("beforeinput",event=>{
-
- // 변환 결과는 백스페이스, 숫자 수정 모두 허용
- if(state.weightIsConverted)return;
 
  if(
   event.inputType&&
@@ -1002,7 +1035,29 @@ $("weight").addEventListener("beforeinput",event=>{
 });
 
 /*
- 중량 입력값 저장 및 결과 갱신
+ 붙여넣기 제한
+*/
+
+$("weight").addEventListener("paste",event=>{
+
+ const input=$("weight");
+ const pasted=event.clipboardData.getData("text");
+
+ const start=input.selectionStart;
+ const end=input.selectionEnd;
+
+ const candidate=
+  input.value.slice(0,start)+
+  pasted+
+  input.value.slice(end);
+
+ if(!isValidWeight(candidate)){
+  event.preventDefault();
+ }
+});
+
+/*
+ 중량 입력 후 상태 갱신
 */
 
 $("weight").addEventListener("input",()=>{
@@ -1010,27 +1065,15 @@ $("weight").addEventListener("input",()=>{
  const input=$("weight");
  const value=input.value;
 
- if(state.weightIsConverted){
+ if(!isValidWeight(value)){
 
-  // 변환 결과는 입력 제한 없이 그대로 수용
-  lastValidWeight=value;
-
-  // 완전히 지우면 새로운 직접 입력 모드로 전환
-  if(value===""){
-   state.weightIsConverted=false;
-  }
+  input.value=lastValidWeight;
 
  }else{
 
-  // 직접 입력일 때만 자리수 제한 적용
-  if(!isValidWeight(value)){
+  lastValidWeight=value;
 
-   input.value=lastValidWeight;
-
-  }else{
-
-   lastValidWeight=value;
-  }
+  updateConvertedLimit(value);
  }
 
  saveWeightInput();
@@ -1263,7 +1306,7 @@ document.querySelectorAll("[data-tab]")
 
 /*
  최초 포커스 시 커서를 끝으로 이동.
- 이후 편집 및 선택은 기본 동작 유지.
+ 이후 커서 이동 및 숫자 일부 수정은 허용.
 */
 
 $("weight").addEventListener("focus",()=>{
@@ -1282,6 +1325,8 @@ $("weight").addEventListener("focus",()=>{
 
 });
 
+/* 키보드 완료 버튼 */
+
 ["weight","reps"].forEach(id=>{
 
  $(id).addEventListener("keydown",event=>{
@@ -1297,6 +1342,8 @@ $("weight").addEventListener("focus",()=>{
 
 });
 
+/* 횟수 입력칸 포커스 시 초기화 */
+
 $("reps").addEventListener("focus",()=>{
 
  $("reps").value="";
@@ -1304,6 +1351,8 @@ $("reps").addEventListener("focus",()=>{
 
  render();
 });
+
+/* 횟수 입력 제한 */
 
 $("reps").addEventListener("beforeinput",event=>{
 
@@ -1355,6 +1404,10 @@ $("reps").addEventListener("input",()=>{
 
  render();
 });
+
+/*
+ 더블탭 확대 방지
+*/
 
 let lastTouchEnd=0;
 
