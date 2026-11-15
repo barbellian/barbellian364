@@ -508,14 +508,53 @@ details[open] summary:after{content:"－";}
  margin-bottom:5px;
 }
 
+/* SNS 링크 및 하단 브랜드 */
+
 .footer{
- border-top:1px solid #ddd;
- margin-top:14px;
- padding-top:12px;
- text-align:right;
+ margin-top:22px;
+ padding-top:2px;
+ text-align:center;
+}
+
+.social-links{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:16px;
+}
+
+.social-link{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:6px;
+ color:#222;
+ text-decoration:none;
+ font-size:13px;
+ font-weight:800;
+ line-height:1.4;
+}
+
+.social-link svg{
+ width:17px;
+ height:17px;
+ display:block;
+ flex-shrink:0;
+}
+
+.social-divider{
+ width:1px;
+ height:15px;
+ background:#bcbcbc;
+}
+
+.footer-brand{
+ margin-top:12px;
+ text-align:center;
  font-size:11px;
  font-weight:900;
  letter-spacing:.07em;
+ color:#555;
 }
 
 @media(max-width:380px){
@@ -725,7 +764,45 @@ NSCA(미국 체력관리학회) Training Load Chart를 기반으로 한 반복 �
 </div>
 
 <footer class="footer">
+
+<div class="social-links">
+
+<a
+class="social-link"
+href="https://youtube.com/@barbellian364"
+target="_blank"
+rel="noopener noreferrer"
+aria-label="BARBELLIAN 364+1 YouTube 채널"
+>
+<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
+</svg>
+<span>YouTube</span>
+</a>
+
+<span class="social-divider" aria-hidden="true"></span>
+
+<a
+class="social-link"
+href="https://www.instagram.com/barbellian364"
+target="_blank"
+rel="noopener noreferrer"
+aria-label="BARBELLIAN 364+1 Instagram"
+>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<rect x="3" y="3" width="18" height="18" rx="5"/>
+<circle cx="12" cy="12" r="4"/>
+<circle cx="18" cy="6" r="1" fill="currentColor" stroke="none"/>
+</svg>
+<span>Instagram</span>
+</a>
+
+</div>
+
+<div class="footer-brand">
 BARBELLIAN 364+1
+</div>
+
 </footer>
 
 </div>
