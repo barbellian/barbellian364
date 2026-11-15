@@ -19,10 +19,7 @@
  --white:#fff;
 }
 
-*{
- box-sizing:border-box;
- touch-action:manipulation;
-}
+*{box-sizing:border-box;touch-action:manipulation;}
 
 html{
  -webkit-text-size-adjust:100%;
@@ -56,54 +53,13 @@ main{
  box-shadow:0 5px 20px #0000000a;
 }
 
-.brand{
- font-weight:900;
- font-size:29px;
- letter-spacing:.055em;
-}
-
-.brand-sub{
- font-size:10px;
- font-weight:800;
- letter-spacing:.14em;
- margin-top:-4px;
- color:#444;
-}
-
-.black-rule{
- height:2px;
- background:#111;
- margin:7px 0 4px;
-}
-
-.title-row{
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:10px;
-}
-
-h1{
- font-size:41px;
- line-height:1.2;
- font-weight:900;
- margin:0;
-}
-
-.eyeline-row{
- display:flex;
- align-items:center;
- justify-content:flex-start;
- margin-top:-4px;
-}
-
-.eyeline{
- font-size:10px;
- font-weight:800;
- letter-spacing:.13em;
- color:#555;
- margin-left:5px;
-}
+.brand{font-weight:900;font-size:29px;letter-spacing:.055em;}
+.brand-sub{font-size:10px;font-weight:800;letter-spacing:.14em;margin-top:-4px;color:#444;}
+.black-rule{height:2px;background:#111;margin:7px 0 4px;}
+.title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+h1{font-size:41px;line-height:1.2;font-weight:900;margin:0;}
+.eyeline-row{display:flex;align-items:center;justify-content:flex-start;margin-top:-4px;}
+.eyeline{font-size:10px;font-weight:800;letter-spacing:.13em;color:#555;margin-left:5px;}
 
 .unit-control{
  display:flex;
@@ -139,10 +95,7 @@ h1{
  font-weight:800;
 }
 
-.unit-switch button.active{
- background:#111;
- color:#fff;
-}
+.unit-switch button.active{background:#111;color:#fff;}
 
 .section-title{
  font-size:19px;
@@ -152,11 +105,7 @@ h1{
  padding-left:5px;
 }
 
-.section-title.tight-bottom{
- margin-bottom:2px;
- font-size:21px;
-}
-
+.section-title.tight-bottom{margin-bottom:2px;font-size:21px;}
 .exercise-wrap{position:relative;}
 
 .exercise{
@@ -179,13 +128,9 @@ h1{
  line-height:1.35;
 }
 
-.choice.active{
- background:#111;
- color:#fff;
- border-color:#111;
-}
+.choice.active{background:#111;color:#fff;border-color:#111;}
 
-/* 산출 중량 단위와 kg/lb 간격 수정 */
+/* 산출 중량 단위와 kg/lb 선택칸 */
 
 .rounding-header{
  display:flex;
@@ -215,12 +160,21 @@ h1{
  justify-content:center;
  width:68px;
  min-width:68px;
- height:34px;
+ height:26px;
  margin-left:-5px;
 }
 
+/* 선택칸 세로 높이 축소 */
 .rounding-header .unit-switch{
- height:34px;
+ height:26px;
+ padding:1px 2px;
+ border-radius:8px;
+}
+
+.rounding-header .unit-switch button{
+ padding:2px 0;
+ line-height:1.2;
+ border-radius:6px;
 }
 
 .segment{
@@ -248,10 +202,7 @@ h1{
  white-space:nowrap;
 }
 
-.segment button.active{
- background:#111;
- color:#fff;
-}
+.segment button.active{background:#111;color:#fff;}
 
 .hint{
  font-size:11.5px;
@@ -291,18 +242,8 @@ input{
  color:#111;
 }
 
-input:focus{
- border-color:#111;
- box-shadow:0 0 0 1px #111;
-}
-
-.error{
- min-height:17px;
- font-size:11px;
- color:#a11;
- font-weight:700;
- padding-top:5px;
-}
+input:focus{border-color:#111;box-shadow:0 0 0 1px #111;}
+.error{min-height:17px;font-size:11px;color:#a11;font-weight:700;padding-top:5px;}
 
 .result{
  background:#111;
@@ -312,18 +253,8 @@ input:focus{
  margin-top:12px;
 }
 
-.result-heading{
- display:flex;
- align-items:center;
- gap:10px;
-}
-
-.result-kicker{
- font-size:12px;
- font-weight:800;
- letter-spacing:.04em;
- color:#e5e5e5;
-}
+.result-heading{display:flex;align-items:center;gap:10px;}
+.result-kicker{font-size:12px;font-weight:800;letter-spacing:.04em;color:#e5e5e5;}
 
 .exercise-badge{
  display:inline-flex;
@@ -348,17 +279,8 @@ input:focus{
  font-variant-numeric:tabular-nums;
 }
 
-.result-number small{
- font-size:21px;
- letter-spacing:0;
- margin-left:6px;
-}
-
-.result-meta{
- font-size:13px;
- color:#ddd;
- margin-top:8px;
-}
+.result-number small{font-size:21px;letter-spacing:0;margin-left:6px;}
+.result-meta{font-size:13px;color:#ddd;margin-top:8px;}
 
 .tabs{
  display:flex;
@@ -382,16 +304,9 @@ input:focus{
  font-weight:800;
 }
 
-.tabs button.active{
- background:#606060;
- color:#fff;
-}
+.tabs button.active{background:#606060;color:#fff;}
 
-.rep-grid{
- display:grid;
- grid-template-columns:repeat(3,minmax(0,1fr));
- gap:9px;
-}
+.rep-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;}
 
 .rep-card{
  border:1.5px solid #bcbcbc;
@@ -403,228 +318,53 @@ input:focus{
  background:#fff;
 }
 
-.rep-card.input-match{
- background:#e2e2e2;
- border:1.5px solid #b5b5b5;
-}
+.rep-card.input-match{background:#e2e2e2;border:1.5px solid #b5b5b5;}
+.rep-title{font-size:clamp(8px,13cqi,12px);font-weight:800;white-space:nowrap;letter-spacing:-.025em;}
+.rep-number{font-size:clamp(12px,30cqi,27px);font-weight:900;letter-spacing:-.035em;margin-top:10px;white-space:nowrap;font-variant-numeric:tabular-nums;width:100%;}
+.rep-number.decimal{font-size:clamp(12px,27cqi,27px);}
+.rep-number small{font-size:.45em;margin-left:.12em;}
 
-.rep-title{
- font-size:clamp(8px,13cqi,12px);
- font-weight:800;
- white-space:nowrap;
- letter-spacing:-.025em;
-}
-
-.rep-number{
- font-size:clamp(12px,30cqi,27px);
- font-weight:900;
- letter-spacing:-.035em;
- margin-top:10px;
- white-space:nowrap;
- font-variant-numeric:tabular-nums;
- width:100%;
-}
-
-.rep-number.decimal{
- font-size:clamp(12px,27cqi,27px);
-}
-
-.rep-number small{
- font-size:.45em;
- margin-left:.12em;
-}
-
-.percent-list{
- display:flex;
- flex-direction:column;
- gap:0;
-}
-
-.percent-row{
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:14px 13px;
- border-radius:8px;
- font-size:16px;
- font-weight:800;
- font-variant-numeric:tabular-nums;
-}
-
-.percent-row + .percent-row{
- border-top:1px solid var(--line);
- border-radius:0;
-}
-
-.percent-row.highlight{
- background:#e2e2e2;
- border-radius:0;
-}
-
-.percent-result{
- font-size:23px;
- font-weight:900;
-}
-
-.percent-result small{
- font-size:12px;
- margin-left:3px;
-}
+.percent-list{display:flex;flex-direction:column;gap:0;}
+.percent-row{display:flex;align-items:center;justify-content:space-between;padding:14px 13px;border-radius:8px;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;}
+.percent-row + .percent-row{border-top:1px solid var(--line);border-radius:0;}
+.percent-row.highlight{background:#e2e2e2;border-radius:0;}
+.percent-result{font-size:23px;font-weight:900;}
+.percent-result small{font-size:12px;margin-left:3px;}
 
 [hidden]{display:none!important;}
 
-details{
- border-top:1px solid #333;
- margin-top:19px;
- padding-top:14px;
-}
-
-summary{
- list-style:none;
- display:flex;
- align-items:center;
- justify-content:space-between;
- font-size:14px;
- font-weight:900;
- cursor:pointer;
-}
-
+details{border-top:1px solid #333;margin-top:19px;padding-top:14px;}
+summary{list-style:none;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:900;cursor:pointer;}
 summary::-webkit-details-marker{display:none;}
 summary:after{content:"＋";font-size:18px;}
 details[open] summary:after{content:"－";}
 
-.detail-content{
- font-size:12px;
- line-height:1.65;
- color:#333;
- padding-top:12px;
-}
+.detail-content{font-size:12px;line-height:1.65;color:#333;padding-top:12px;}
+.detail-content strong{display:block;color:#111;margin:9px 0 2px;}
+.detail-divider{height:1px;background:#d5d5d5;margin:13px 0;}
+.detail-email{display:inline-block;color:#111;font-weight:800;text-decoration:underline;text-underline-offset:2px;}
 
-.detail-content strong{
- display:block;
- color:#111;
- margin:9px 0 2px;
-}
+.notice{border-top:1px solid #ddd;margin-top:17px;padding-top:13px;font-size:11px;line-height:1.7;font-weight:650;}
+.notice-label{font-size:10px;letter-spacing:.13em;color:#555;font-weight:900;margin-bottom:5px;}
 
-/* 기타와 문의 및 피드백 사이 구분선 */
-
-.detail-divider{
- height:1px;
- background:#d5d5d5;
- margin:13px 0;
-}
-
-.detail-email{
- display:inline-block;
- color:#111;
- font-weight:800;
- text-decoration:underline;
- text-underline-offset:2px;
-}
-
-.notice{
- border-top:1px solid #ddd;
- margin-top:17px;
- padding-top:13px;
- font-size:11px;
- line-height:1.7;
- font-weight:650;
-}
-
-.notice-label{
- font-size:10px;
- letter-spacing:.13em;
- color:#555;
- font-weight:900;
- margin-bottom:5px;
-}
-
-/* SNS 링크 및 하단 브랜드 */
-
-.footer{
- margin-top:22px;
- padding-top:2px;
- text-align:center;
-}
-
-.social-links{
- display:flex;
- align-items:center;
- justify-content:center;
- gap:16px;
-}
-
-.social-link{
- display:inline-flex;
- align-items:center;
- justify-content:center;
- gap:6px;
- color:#222;
- text-decoration:none;
- font-size:13px;
- font-weight:800;
- line-height:1.4;
-}
-
-.social-link svg{
- width:17px;
- height:17px;
- display:block;
- flex-shrink:0;
-}
-
-.social-divider{
- width:1px;
- height:15px;
- background:#bcbcbc;
-}
-
-.footer-brand{
- margin-top:6px;
- text-align:center;
- font-size:13px;
- font-weight:900;
- letter-spacing:.07em;
- color:#111;
-}
+.footer{margin-top:22px;padding-top:2px;text-align:center;}
+.social-links{display:flex;align-items:center;justify-content:center;gap:16px;}
+.social-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;color:#222;text-decoration:none;font-size:13px;font-weight:800;line-height:1.4;}
+.social-link svg{width:17px;height:17px;display:block;flex-shrink:0;}
+.social-divider{width:1px;height:15px;background:#bcbcbc;}
+.footer-brand{margin-top:6px;text-align:center;font-size:13px;font-weight:900;letter-spacing:.07em;color:#111;}
 
 @media(max-width:380px){
- main{
-  padding-left:10px;
-  padding-right:10px;
- }
-
- .shell{
-  padding-left:14px;
-  padding-right:14px;
- }
-
+ main{padding-left:10px;padding-right:10px;}
+ .shell{padding-left:14px;padding-right:14px;}
  .choice{font-size:14px;}
-
- /* 기존 gap:7px 덮어쓰기 제거 */
- .rounding-header{
-  gap:0;
- }
-
- .rounding-header .section-title{
-  font-size:21px;
- }
-
- .unit-control,
- .rounding-header .unit-control{
-  width:66px;
-  min-width:66px;
- }
-
- .rounding-header .unit-control{
-  margin-left:3px;
- }
-
- .unit-switch button{
-  font-size:10px;
-  padding:5px 0;
- }
-
+ .rounding-header{gap:0;}
+ .rounding-header .section-title{font-size:21px;}
+ .unit-control,.rounding-header .unit-control{width:66px;min-width:66px;}
+ .rounding-header .unit-control{margin-left:3px;}
+ .unit-switch button{font-size:10px;padding:5px 0;}
+ .rounding-header .unit-switch{height:26px;padding:1px 2px;}
+ .rounding-header .unit-switch button{padding:2px 0;}
  .segment button{font-size:13px;}
  .rep-grid{gap:7px;}
 }
@@ -645,134 +385,63 @@ details[open] summary:after{content:"－";}
 <div class="brand">BARBELLIAN</div>
 <div class="brand-sub">364+1 · STRENGTH TRAINING</div>
 <div class="black-rule"></div>
-
-<div class="title-row">
-<h1>1RM 계산기</h1>
-</div>
-
-<div class="eyeline-row">
-<div class="eyeline">STRENGTH TRAINING TOOL</div>
-</div>
+<div class="title-row"><h1>1RM 계산기</h1></div>
+<div class="eyeline-row"><div class="eyeline">STRENGTH TRAINING TOOL</div></div>
 </header>
 
 <div class="section-title tight-bottom">종목 선택</div>
 
 <div class="exercise-wrap">
 <div class="exercise" id="exerciseChoices">
-
-<button type="button" class="choice active"
-data-exercise="스쿼트">스쿼트</button>
-
-<button type="button" class="choice"
-data-exercise="벤치프레스">벤치프레스</button>
-
-<button type="button" class="choice"
-data-exercise="데드리프트">데드리프트</button>
-
-<button type="button" class="choice"
-data-exercise="오버헤드프레스">오버헤드프레스</button>
-
-<button type="button" class="choice"
-data-exercise="기타">기타</button>
-
+<button type="button" class="choice active" data-exercise="스쿼트">스쿼트</button>
+<button type="button" class="choice" data-exercise="벤치프레스">벤치프레스</button>
+<button type="button" class="choice" data-exercise="데드리프트">데드리프트</button>
+<button type="button" class="choice" data-exercise="오버헤드프레스">오버헤드프레스</button>
+<button type="button" class="choice" data-exercise="기타">기타</button>
 </div>
 </div>
 
 <div class="rounding-header">
-
-<div class="section-title">
-산출 중량 단위
-</div>
-
+<div class="section-title">산출 중량 단위</div>
 <div class="unit-control">
 <div class="unit-switch" id="units">
-
-<button type="button" class="active"
-data-unit="kg">kg</button>
-
-<button type="button"
-data-unit="lb">lb</button>
-
+<button type="button" class="active" data-unit="kg">kg</button>
+<button type="button" data-unit="lb">lb</button>
 </div>
 </div>
 </div>
 
 <div class="segment" id="rounding">
-
-<button type="button" class="active"
-data-round="1">1kg</button>
-
-<button type="button"
-data-round="0.5">0.5kg</button>
-
-<button type="button"
-data-round="0.1">0.1kg</button>
-
+<button type="button" class="active" data-round="1">1kg</button>
+<button type="button" data-round="0.5">0.5kg</button>
+<button type="button" data-round="0.1">0.1kg</button>
 </div>
 
-<p class="hint">
-선택한 단위로 모든 산출 중량을 반올림합니다.
-</p>
+<p class="hint">선택한 단위로 모든 산출 중량을 반올림합니다.</p>
 
 <div class="fields">
-
 <div>
-<div class="field-label">
-중량 (<span id="weightUnit">kg</span>)
+<div class="field-label">중량 (<span id="weightUnit">kg</span>)</div>
+<input id="weight" type="text" min="0" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="중량 입력">
 </div>
-
-<input
-id="weight"
-type="text"
-min="0"
-inputmode="decimal"
-enterkeyhint="done"
-autocomplete="off"
-placeholder="중량 입력"
->
-</div>
-
 <div>
 <div class="field-label">횟수 (1~12회)</div>
-
-<input
-id="reps"
-type="text"
-inputmode="numeric"
-pattern="[0-9]*"
-enterkeyhint="done"
-autocomplete="off"
-placeholder="횟수 입력"
->
+<input id="reps" type="text" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" autocomplete="off" placeholder="횟수 입력">
 </div>
-
 </div>
 
 <section class="result" aria-live="polite">
-
 <div class="result-heading">
- <div class="result-kicker">ESTIMATED 1RM</div>
- <div class="exercise-badge" id="exerciseBadge">스쿼트</div>
+<div class="result-kicker">ESTIMATED 1RM</div>
+<div class="exercise-badge" id="exerciseBadge">스쿼트</div>
 </div>
-
-<div class="result-number">
-<span id="oneRm">--</span><small id="resultUnit">kg</small>
-</div>
-
-<div class="result-meta" id="resultMeta">
-중량과 횟수를 입력해 주세요.
-</div>
-
+<div class="result-number"><span id="oneRm">--</span><small id="resultUnit">kg</small></div>
+<div class="result-meta" id="resultMeta">중량과 횟수를 입력해 주세요.</div>
 </section>
 
 <div class="tabs">
-
-<button type="button" class="active"
-data-tab="reps">횟수별</button>
-
-<button type="button"
-data-tab="percent">퍼센트별</button>
-
+<button type="button" class="active" data-tab="reps">횟수별</button>
+<button type="button" data-tab="percent">퍼센트별</button>
 </div>
 
 <div id="repsView" class="rep-grid"></div>
@@ -780,65 +449,34 @@ data-tab="percent">퍼센트별</button>
 
 <details>
 <summary>계산 방식 및 참고</summary>
-
 <div class="detail-content">
-
-<strong>
-종목별 (스쿼트 · 벤치프레스 · 데드리프트 · 오버헤드프레스)
-</strong>
-
+<strong>종목별 (스쿼트 · 벤치프레스 · 데드리프트 · 오버헤드프레스)</strong>
 NSCA(미국 체력관리학회) Training Load Chart와 스포츠 과학 분야의 1RM 예측 연구를 바탕으로, 종목별 특성을 반영한 보정 추정치입니다.
-
 <strong>기타</strong>
-
 NSCA(미국 체력관리학회) Training Load Chart를 기반으로 한 반복 횟수별 공통 기준 추정치.
-
 <div class="detail-divider"></div>
-
 <strong>문의 및 피드백</strong>
-
 앱 사용 중 발견한 오류나 버그, 개선 의견은 아래 이메일이나 유튜브·인스타 댓글로 작성해 주시면 앱을 개선하는 데 참고하겠습니다.<br>
-
 <strong>앱을 이용해주셔서 감사합니다.</strong>
-
 </div>
 </details>
 
 <div class="notice">
-
 <div class="notice-label">NOTICE</div>
-
 ※ 표시된 값은 추정치이며, 실제 수행 중량과는 차이가 있을 수 있습니다.<br>
 ※ 입력 중량이 너무 낮거나 반복 횟수가 많아질수록 추정 오차가 커질 수 있습니다.
-
 </div>
 
 <footer class="footer">
-
 <div class="social-links">
-
-<a
-class="social-link"
-href="https://youtube.com/@barbellian364"
-target="_blank"
-rel="noopener noreferrer"
-aria-label="BARBELLIAN 364+1 YouTube 채널"
->
+<a class="social-link" href="https://youtube.com/@barbellian364" target="_blank" rel="noopener noreferrer" aria-label="BARBELLIAN 364+1 YouTube 채널">
 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
 </svg>
 <span>YouTube</span>
 </a>
-
 <span class="social-divider" aria-hidden="true"></span>
-
-<a
-class="social-link"
-href="https://www.instagram.com/barbellian364"
-target="_blank"
-rel="noopener noreferrer"
-aria-label="BARBELLIAN 364+1 Instagram"
->
+<a class="social-link" href="https://www.instagram.com/barbellian364" target="_blank" rel="noopener noreferrer" aria-label="BARBELLIAN 364+1 Instagram">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <rect x="3" y="3" width="18" height="18" rx="5"/>
 <circle cx="12" cy="12" r="4"/>
@@ -846,13 +484,8 @@ aria-label="BARBELLIAN 364+1 Instagram"
 </svg>
 <span>Instagram</span>
 </a>
-
 </div>
-
-<div class="footer-brand">
-BARBELLIAN 364+1
-</div>
-
+<div class="footer-brand">BARBELLIAN 364+1</div>
 </footer>
 
 </div>
@@ -875,313 +508,184 @@ const state={
 };
 
 const LB_PER_KG=2.2046226218;
-
 let lastValidReps="";
 
 function isValidReps(value){
  return value===""||/^(?:[1-9]|1[0-2])$/.test(value);
 }
 
-const repPercent=[
- 100,95,93,90,87,85,83,80,77,75,73,70
-];
+const repPercent=[100,95,93,90,87,85,83,80,77,75,73,70];
 
 const exerciseFactors={
- "스쿼트":[
-  1,1.048,1.130,1.158,1.200,1.242,
-  1.284,1.326,1.368,1.410,1.452,1.494
- ],
- "벤치프레스":[
-  1,1.035,1.080,1.115,1.150,1.180,
-  1.220,1.255,1.290,1.325,1.360,1.395
- ],
- "데드리프트":[
-  1,1.065,1.130,1.147,1.164,1.181,
-  1.198,1.220,1.232,1.240,1.252,1.264
- ],
- "오버헤드프레스":[
-  1,1.030,1.065,1.100,1.135,1.165,
-  1.200,1.230,1.265,1.295,1.325,1.355
- ]
+ "스쿼트":[1,1.048,1.130,1.158,1.200,1.242,1.284,1.326,1.368,1.410,1.452,1.494],
+ "벤치프레스":[1,1.035,1.080,1.115,1.150,1.180,1.220,1.255,1.290,1.325,1.360,1.395],
+ "데드리프트":[1,1.065,1.130,1.147,1.164,1.181,1.198,1.220,1.232,1.240,1.252,1.264],
+ "오버헤드프레스":[1,1.030,1.065,1.100,1.135,1.165,1.200,1.230,1.265,1.295,1.325,1.355]
 };
 
 function roundValue(value){
- return Math.round(
-  value/state.round+Number.EPSILON
- )*state.round;
+ return Math.round(value/state.round+Number.EPSILON)*state.round;
 }
 
 function format(value){
  const n=roundValue(value);
-
- if(state.round===1){
-  return String(Math.round(n));
- }
-
+ if(state.round===1)return String(Math.round(n));
  return n.toFixed(1);
 }
 
 function displayFromKg(kg){
- return state.unit==="kg"
-  ?kg
-  :kg*LB_PER_KG;
+ return state.unit==="kg"?kg:kg*LB_PER_KG;
 }
 
 function saveWeightInput(){
-
  const raw=$("weight").value.trim();
-
  if(raw===""){
   state.weightKg=null;
   state.weightSourceUnit=null;
   state.weightSourceValue=null;
   return;
  }
-
  const value=Number(raw);
-
  if(!Number.isFinite(value)){
   state.weightKg=null;
   state.weightSourceUnit=null;
   state.weightSourceValue=null;
   return;
  }
-
- state.weightKg=
-  state.unit==="kg"
-   ?value
-   :value/LB_PER_KG;
-
+ state.weightKg=state.unit==="kg"?value:value/LB_PER_KG;
  state.weightSourceUnit=state.unit;
  state.weightSourceValue=raw;
 }
 
 function changeWeightUnit(next){
-
  if(next===state.unit)return;
-
  state.unit=next;
-
  if(state.weightKg!==null){
-
   let converted;
-
   if(next===state.weightSourceUnit){
    converted=state.weightSourceValue;
   }else if(next==="kg"){
    converted=String(state.weightKg);
   }else{
-   converted=String(
-    Number(
-     (state.weightKg*LB_PER_KG).toFixed(4)
-    )
-   );
+   converted=String(Number((state.weightKg*LB_PER_KG).toFixed(4)));
   }
-
   $("weight").value=converted;
  }
-
  setActive();
  render();
 }
 
 function setActive(){
-
- document.querySelectorAll("[data-exercise]")
- .forEach(button=>{
-
-  const selected=
-   button.dataset.exercise===state.exercise;
-
+ document.querySelectorAll("[data-exercise]").forEach(button=>{
+  const selected=button.dataset.exercise===state.exercise;
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
+  button.setAttribute("aria-pressed",String(selected));
  });
 
- document.querySelectorAll("[data-unit]")
- .forEach(button=>{
-
-  const selected=
-   button.dataset.unit===state.unit;
-
+ document.querySelectorAll("[data-unit]").forEach(button=>{
+  const selected=button.dataset.unit===state.unit;
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
+  button.setAttribute("aria-pressed",String(selected));
  });
 
- document.querySelectorAll("[data-round]")
- .forEach(button=>{
-
+ document.querySelectorAll("[data-round]").forEach(button=>{
   const round=Number(button.dataset.round);
   const selected=round===state.round;
-
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
-
-  button.textContent=
-   button.dataset.round+state.unit;
+  button.setAttribute("aria-pressed",String(selected));
+  button.textContent=button.dataset.round+state.unit;
  });
 
- document.querySelectorAll("[data-tab]")
- .forEach(button=>{
-
-  const selected=
-   button.dataset.tab===state.tab;
-
+ document.querySelectorAll("[data-tab]").forEach(button=>{
+  const selected=button.dataset.tab===state.tab;
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
+  button.setAttribute("aria-pressed",String(selected));
  });
 }
 
 function render(){
-
  const rawW=$("weight").value.trim();
  const rawR=$("reps").value.trim();
-
  const w=Number(rawW);
  const r=Number(rawR);
 
- const validW=
-  rawW!==""&&Number.isFinite(w)&&w>=0;
-
- const validR=
-  rawR!==""&&isValidReps(rawR)&&rawR!=="";
+ const validW=rawW!==""&&Number.isFinite(w)&&w>=0;
+ const validR=rawR!==""&&isValidReps(rawR)&&rawR!=="";
 
  $("weightUnit").textContent=state.unit;
  $("resultUnit").textContent=state.unit;
  $("exerciseBadge").textContent=state.exercise;
-
- $("repsView").hidden=
-  state.tab!=="reps";
-
- $("percentView").hidden=
-  state.tab!=="percent";
+ $("repsView").hidden=state.tab!=="reps";
+ $("percentView").hidden=state.tab!=="percent";
 
  if(!validW||!validR){
-
   $("oneRm").textContent="--";
-
-  $("resultMeta").textContent=
-   "중량과 횟수를 입력해 주세요.";
-
+  $("resultMeta").textContent="중량과 횟수를 입력해 주세요.";
   $("repsView").innerHTML="";
-
-  $("percentView").innerHTML=
-   '<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
-
+  $("percentView").innerHTML='<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
   return;
  }
 
- const weightKg=
-  state.unit==="kg"
-   ?w
-   :w/LB_PER_KG;
-
+ const weightKg=state.unit==="kg"?w:w/LB_PER_KG;
  let oneRmKg;
 
  if(r===1){
   oneRmKg=weightKg;
  }else if(state.exercise==="기타"){
-  oneRmKg=
-   weightKg/(repPercent[r-1]/100);
+  oneRmKg=weightKg/(repPercent[r-1]/100);
  }else{
-  oneRmKg=
-   weightKg*exerciseFactors[state.exercise][r-1];
+  oneRmKg=weightKg*exerciseFactors[state.exercise][r-1];
  }
 
  const oneRm=displayFromKg(oneRmKg);
-
  $("oneRm").textContent=format(oneRm);
+ $("resultMeta").textContent=`${state.exercise} · ${rawW}${state.unit} × ${r}회`;
 
- $("resultMeta").textContent=
-  `${state.exercise} · ${rawW}${state.unit} × ${r}회`;
+ const repResults=Array.from({length:12},(_,i)=>{
+  const targetReps=i+1;
+  const predicted=state.exercise==="기타"
+   ?oneRm*repPercent[i]/100
+   :oneRm/exerciseFactors[state.exercise][i];
 
- const repResults=
-  Array.from({length:12},(_,i)=>{
+  const percentage=oneRm===0?"0.0":(predicted/oneRm*100).toFixed(1);
+  const formatted=format(predicted);
+  const numberClass=formatted.includes(".")?"decimal":"";
+  const matchClass=targetReps===r?"input-match":"";
 
-   const targetReps=i+1;
+  return `
+   <div class="rep-card ${matchClass}">
+    <div class="rep-title">${targetReps}RM (${percentage}%)</div>
+    <div class="rep-number ${numberClass}">${formatted}<small>${state.unit}</small></div>
+   </div>
+  `;
+ });
 
-   const predicted=
-    state.exercise==="기타"
-     ?oneRm*repPercent[i]/100
-     :oneRm/exerciseFactors[state.exercise][i];
+ $("repsView").innerHTML=repResults.join("");
 
-   const percentage=
-    oneRm===0
-     ?"0.0"
-     :(predicted/oneRm*100).toFixed(1);
-
-   const formatted=format(predicted);
-
-   const numberClass=
-    formatted.includes(".")?"decimal":"";
-
-   const matchClass=
-    targetReps===r?"input-match":"";
-
-   return `
-    <div class="rep-card ${matchClass}">
-     <div class="rep-title">
-      ${targetReps}RM (${percentage}%)
-     </div>
-     <div class="rep-number ${numberClass}">
-      ${formatted}<small>${state.unit}</small>
-     </div>
-    </div>
-   `;
-  });
-
- $("repsView").innerHTML=
-  repResults.join("");
-
- document.querySelectorAll(".rep-number")
- .forEach(el=>{
-
-  const baseSize=
-   parseFloat(getComputedStyle(el).fontSize);
-
+ document.querySelectorAll(".rep-number").forEach(el=>{
+  const baseSize=parseFloat(getComputedStyle(el).fontSize);
   let size=baseSize;
-
   el.style.fontSize=size+"px";
-
-  while(
-   el.scrollWidth>el.clientWidth&&size>10
-  ){
+  while(el.scrollWidth>el.clientWidth&&size>10){
    size-=0.5;
    el.style.fontSize=size+"px";
   }
  });
 
- const percentRows=[
-  120,115,110,105,100,95,90,85,
-  80,75,70,65,60,55,50,45,
-  40,35,30,25,20,15,10,5
- ];
+ const percentRows=[120,115,110,105,100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5];
 
- $("percentView").innerHTML=
-  percentRows.map(pct=>{
-
-   const predicted=oneRm*pct/100;
-
-   return `
-    <div class="percent-row ${pct===100?"highlight":""}">
-     <span>${pct}%</span>
-     <span class="percent-result">
-      ${format(predicted)}<small>${state.unit}</small>
-     </span>
-    </div>
-   `;
-  }).join("");
+ $("percentView").innerHTML=percentRows.map(pct=>{
+  const predicted=oneRm*pct/100;
+  return `
+   <div class="percent-row ${pct===100?"highlight":""}">
+    <span>${pct}%</span>
+    <span class="percent-result">${format(predicted)}<small>${state.unit}</small></span>
+   </div>
+  `;
+ }).join("");
 }
 
-document.querySelectorAll("[data-exercise]")
-.forEach(button=>{
+document.querySelectorAll("[data-exercise]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.exercise=button.dataset.exercise;
   setActive();
@@ -1189,15 +693,13 @@ document.querySelectorAll("[data-exercise]")
  });
 });
 
-document.querySelectorAll("[data-unit]")
-.forEach(button=>{
+document.querySelectorAll("[data-unit]").forEach(button=>{
  button.addEventListener("click",()=>{
   changeWeightUnit(button.dataset.unit);
  });
 });
 
-document.querySelectorAll("[data-round]")
-.forEach(button=>{
+document.querySelectorAll("[data-round]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.round=Number(button.dataset.round);
   setActive();
@@ -1205,8 +707,7 @@ document.querySelectorAll("[data-round]")
  });
 });
 
-document.querySelectorAll("[data-tab]")
-.forEach(button=>{
+document.querySelectorAll("[data-tab]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.tab=button.dataset.tab;
   setActive();
@@ -1217,25 +718,17 @@ document.querySelectorAll("[data-tab]")
 /* 중량 입력칸 커서를 항상 숫자 맨 뒤로 이동 */
 
 function moveWeightCaretToEnd(){
-
  const input=$("weight");
  const length=input.value.length;
-
  input.setSelectionRange(length,length);
 }
 
 $("weight").addEventListener("focus",()=>{
-
- requestAnimationFrame(()=>{
-  moveWeightCaretToEnd();
- });
-
+ requestAnimationFrame(()=>moveWeightCaretToEnd());
 });
 
 $("weight").addEventListener("click",()=>{
-
  moveWeightCaretToEnd();
-
 });
 
 $("weight").addEventListener("input",()=>{
@@ -1246,109 +739,69 @@ $("weight").addEventListener("input",()=>{
 /* 키보드 완료 버튼을 누르면 입력을 마치고 키보드 닫기 */
 
 ["weight","reps"].forEach(id=>{
-
  $(id).addEventListener("keydown",event=>{
-
   if(event.key==="Enter"){
-
    event.preventDefault();
    $(id).blur();
-
   }
-
  });
-
 });
 
 /* 횟수 입력칸에 포커스하면 기존 숫자 지우기 */
 
 $("reps").addEventListener("focus",()=>{
-
  $("reps").value="";
  lastValidReps="";
-
  render();
 });
 
 /* 횟수 입력 제한 */
 
 $("reps").addEventListener("beforeinput",event=>{
-
- if(
-  event.inputType&&
-  event.inputType.startsWith("delete")
- ){
-  return;
- }
+ if(event.inputType&&event.inputType.startsWith("delete"))return;
 
  const input=$("reps");
-
  let inserted=event.data;
 
- if(
-  inserted===null&&
-  event.inputType==="insertFromPaste"&&
-  event.dataTransfer
- ){
-  inserted=
-   event.dataTransfer.getData("text");
+ if(inserted===null&&event.inputType==="insertFromPaste"&&event.dataTransfer){
+  inserted=event.dataTransfer.getData("text");
  }
 
  if(inserted===null)return;
 
  const start=input.selectionStart;
  const end=input.selectionEnd;
+ const candidate=input.value.slice(0,start)+inserted+input.value.slice(end);
 
- const candidate=
-  input.value.slice(0,start)+
-  inserted+
-  input.value.slice(end);
-
- if(!isValidReps(candidate)){
-  event.preventDefault();
- }
+ if(!isValidReps(candidate))event.preventDefault();
 });
 
 $("reps").addEventListener("input",()=>{
-
  const input=$("reps");
  const value=input.value;
-
  if(isValidReps(value)){
   lastValidReps=value;
  }else{
   input.value=lastValidReps;
  }
-
  render();
 });
 
-/* 빈 공간과 결과 상자 등의 더블탭 확대 방지
-   버튼과 입력 요소의 기본 동작은 유지 */
+/* 빈 공간과 결과 상자 등의 더블탭 확대 방지 */
 
 let lastTouchEnd=0;
 
 document.addEventListener("touchend",event=>{
-
  const target=event.target;
 
- if(
-  target.closest(
-   "button, input, select, textarea, a, label, summary"
-  )
- ){
+ if(target.closest("button, input, select, textarea, a, label, summary")){
   lastTouchEnd=0;
   return;
  }
 
  const now=Date.now();
-
- if(now-lastTouchEnd<=300){
-  event.preventDefault();
- }
-
+ if(now-lastTouchEnd<=300)event.preventDefault();
  lastTouchEnd=now;
-
 },{passive:false});
 
 setActive();
@@ -1359,13 +812,8 @@ render();
 
 <script>
 if("serviceWorker" in navigator){
-
  window.addEventListener("load",()=>{
-
-  navigator.serviceWorker
-   .register("./sw.js")
-   .catch(()=>{});
-
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
  });
 }
 </script>
