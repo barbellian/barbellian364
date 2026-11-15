@@ -185,6 +185,8 @@ h1{
  border-color:#111;
 }
 
+/* 산출 중량 단위와 kg/lb 선택 영역 중심 정렬 */
+
 .rounding-header{
  display:flex;
  align-items:center;
@@ -197,15 +199,27 @@ h1{
 }
 
 .rounding-header .section-title{
+ display:flex;
+ align-items:center;
+ height:34px;
  margin:0;
- padding-left:5px;
+ padding:0 0 0 5px;
  white-space:nowrap;
  font-size:21px;
+ line-height:1;
 }
 
 .rounding-header .unit-control{
+ display:flex;
+ align-items:center;
+ justify-content:center;
  width:68px;
  min-width:68px;
+ height:34px;
+}
+
+.rounding-header .unit-switch{
+ height:34px;
 }
 
 .segment{
