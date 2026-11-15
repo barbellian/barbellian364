@@ -19,7 +19,10 @@
  --white:#fff;
 }
 
-*{box-sizing:border-box;}
+*{
+ box-sizing:border-box;
+ touch-action:manipulation;
+}
 
 html{
  -webkit-text-size-adjust:100%;
@@ -250,7 +253,7 @@ h1{
  margin-top:9px;
 }
 
-label{
+.field-label{
  display:block;
  font-size:16px;
  font-weight:800;
@@ -613,9 +616,9 @@ data-round="0.1">0.1kg</button>
 <div class="fields">
 
 <div>
-<label for="weight">
+<div class="field-label">
 중량 (<span id="weightUnit">kg</span>)
-</label>
+</div>
 
 <input
 id="weight"
@@ -629,7 +632,7 @@ placeholder="중량 입력"
 </div>
 
 <div>
-<label for="reps">횟수 (1~12회)</label>
+<div class="field-label">횟수 (1~12회)</div>
 
 <input
 id="reps"
@@ -1168,6 +1171,34 @@ $("reps").addEventListener("input",()=>{
 
  render();
 });
+
+/* 빈 공간과 결과 상자 등의 더블탭 확대 방지
+   버튼과 입력 요소의 기본 동작은 유지 */
+
+let lastTouchEnd=0;
+
+document.addEventListener("touchend",event=>{
+
+ const target=event.target;
+
+ if(
+  target.closest(
+   "button, input, select, textarea, a, label, summary"
+  )
+ ){
+  lastTouchEnd=0;
+  return;
+ }
+
+ const now=Date.now();
+
+ if(now-lastTouchEnd<=300){
+  event.preventDefault();
+ }
+
+ lastTouchEnd=now;
+
+},{passive:false});
 
 setActive();
 render();
