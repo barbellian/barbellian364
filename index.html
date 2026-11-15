@@ -618,10 +618,10 @@ data-round="0.1">0.1kg</button>
 
 <input
 id="weight"
-type="number"
+type="text"
 min="0"
-step="any"
 inputmode="decimal"
+autocomplete="off"
 placeholder="중량 입력"
 >
 </div>
@@ -1055,6 +1055,30 @@ document.querySelectorAll("[data-tab]")
   setActive();
   render();
  });
+});
+
+/* 중량 입력칸 커서를 항상 숫자 맨 뒤로 이동 */
+
+function moveWeightCaretToEnd(){
+
+ const input=$("weight");
+ const length=input.value.length;
+
+ input.setSelectionRange(length,length);
+}
+
+$("weight").addEventListener("focus",()=>{
+
+ requestAnimationFrame(()=>{
+  moveWeightCaretToEnd();
+ });
+
+});
+
+$("weight").addEventListener("click",()=>{
+
+ moveWeightCaretToEnd();
+
 });
 
 $("weight").addEventListener("input",()=>{
