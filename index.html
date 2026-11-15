@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ko">
 <head>
@@ -19,15 +18,11 @@
  --white:#fff;
 }
 
-*{
- box-sizing:border-box;
- touch-action:manipulation;
-}
+*{box-sizing:border-box;}
 
 html{
  -webkit-text-size-adjust:100%;
  text-size-adjust:100%;
- touch-action:manipulation;
 }
 
 body{
@@ -491,8 +486,6 @@ details[open] summary:after{content:"－";}
  margin:9px 0 2px;
 }
 
-/* 기타와 문의 및 피드백 사이 구분선 */
-
 .detail-divider{
  height:1px;
  background:#d5d5d5;
@@ -523,8 +516,6 @@ details[open] summary:after{content:"－";}
  font-weight:900;
  margin-bottom:5px;
 }
-
-/* SNS 링크 및 하단 브랜드 */
 
 .footer{
  margin-top:22px;
@@ -654,35 +645,20 @@ data-exercise="기타">기타</button>
 </div>
 
 <div class="rounding-header">
-
-<div class="section-title">
-산출 중량 단위
-</div>
+<div class="section-title">산출 중량 단위</div>
 
 <div class="unit-control">
 <div class="unit-switch" id="units">
-
-<button type="button" class="active"
-data-unit="kg">kg</button>
-
-<button type="button"
-data-unit="lb">lb</button>
-
+<button type="button" class="active" data-unit="kg">kg</button>
+<button type="button" data-unit="lb">lb</button>
 </div>
 </div>
 </div>
 
 <div class="segment" id="rounding">
-
-<button type="button" class="active"
-data-round="1">1kg</button>
-
-<button type="button"
-data-round="0.5">0.5kg</button>
-
-<button type="button"
-data-round="0.1">0.1kg</button>
-
+<button type="button" class="active" data-round="1">1kg</button>
+<button type="button" data-round="0.5">0.5kg</button>
+<button type="button" data-round="0.1">0.1kg</button>
 </div>
 
 <p class="hint">
@@ -699,7 +675,6 @@ data-round="0.1">0.1kg</button>
 <input
 id="weight"
 type="text"
-min="0"
 inputmode="decimal"
 enterkeyhint="done"
 autocomplete="off"
@@ -724,10 +699,9 @@ placeholder="횟수 입력"
 </div>
 
 <section class="result" aria-live="polite">
-
 <div class="result-heading">
- <div class="result-kicker">ESTIMATED 1RM</div>
- <div class="exercise-badge" id="exerciseBadge">스쿼트</div>
+<div class="result-kicker">ESTIMATED 1RM</div>
+<div class="exercise-badge" id="exerciseBadge">스쿼트</div>
 </div>
 
 <div class="result-number">
@@ -737,17 +711,11 @@ placeholder="횟수 입력"
 <div class="result-meta" id="resultMeta">
 중량과 횟수를 입력해 주세요.
 </div>
-
 </section>
 
 <div class="tabs">
-
-<button type="button" class="active"
-data-tab="reps">횟수별</button>
-
-<button type="button"
-data-tab="percent">퍼센트별</button>
-
+<button type="button" class="active" data-tab="reps">횟수별</button>
+<button type="button" data-tab="percent">퍼센트별</button>
 </div>
 
 <div id="repsView" class="rep-grid"></div>
@@ -780,12 +748,10 @@ NSCA(미국 체력관리학회) Training Load Chart를 기반으로 한 반복 �
 </details>
 
 <div class="notice">
-
 <div class="notice-label">NOTICE</div>
 
 ※ 표시된 값은 추정치이며, 실제 수행 중량과는 차이가 있을 수 있습니다.<br>
 ※ 입력 중량이 너무 낮거나 반복 횟수가 많아질수록 추정 오차가 커질 수 있습니다.
-
 </div>
 
 <footer class="footer">
@@ -845,13 +811,39 @@ const state={
  round:1,
  tab:"reps",
  weightKg:null,
- weightSourceUnit:null,
- weightSourceValue:null
+
+ // 변환 결과의 기존 자릿수만 임시 허용
+ weightIsConverted:false,
+ convertedIntegerLimit:0
 };
 
 const LB_PER_KG=2.2046226218;
 
 let lastValidReps="";
+let lastValidWeight="";
+
+function integerDigits(value){
+ const integerPart=value.split(".")[0];
+ return integerPart.length;
+}
+
+function isValidWeight(value){
+
+ if(value==="")return true;
+
+ const normalLimit=state.unit==="kg"?4:5;
+
+ const integerLimit=
+  state.weightIsConverted
+   ?Math.max(normalLimit,state.convertedIntegerLimit)
+   :normalLimit;
+
+ const pattern=new RegExp(
+  "^\\d{0,"+integerLimit+"}(?:\\.\\d{0,4})?$"
+ );
+
+ return pattern.test(value);
+}
 
 function isValidReps(value){
  return value===""||/^(?:[1-9]|1[0-2])$/.test(value);
@@ -902,14 +894,17 @@ function displayFromKg(kg){
   :kg*LB_PER_KG;
 }
 
+function formatConvertedWeight(value){
+ if(!Number.isFinite(value))return "";
+ return Number(value.toFixed(4)).toString();
+}
+
 function saveWeightInput(){
 
  const raw=$("weight").value.trim();
 
- if(raw===""){
+ if(raw===""||raw==="."){
   state.weightKg=null;
-  state.weightSourceUnit=null;
-  state.weightSourceValue=null;
   return;
  }
 
@@ -917,8 +912,6 @@ function saveWeightInput(){
 
  if(!Number.isFinite(value)){
   state.weightKg=null;
-  state.weightSourceUnit=null;
-  state.weightSourceValue=null;
   return;
  }
 
@@ -926,39 +919,182 @@ function saveWeightInput(){
   state.unit==="kg"
    ?value
    :value/LB_PER_KG;
-
- state.weightSourceUnit=state.unit;
- state.weightSourceValue=raw;
 }
+
+/*
+ 변환 결과 자릿수 제한 관리
+
+ 변환 직후 기존 정수 자릿수는 유지.
+ 기존 자릿수를 초과하는 숫자 추가는 차단.
+
+ 정수부가 일반 입력 제한 이하로 줄어들면
+ 즉시 일반 입력 제한으로 복귀.
+*/
+
+function updateConvertedLimit(value){
+
+ if(!state.weightIsConverted)return;
+
+ const digits=integerDigits(value);
+ const normalLimit=state.unit==="kg"?4:5;
+
+ if(digits<=normalLimit){
+
+  state.weightIsConverted=false;
+  state.convertedIntegerLimit=0;
+ }
+}
+
+/*
+ 단위 변환
+
+ state.weightKg에는 최초 입력값 또는 사용자가
+ 직접 수정한 값의 정밀한 kg 기준값을 보관한다.
+
+ 단위 변경 시 화면에 표시된 반올림 숫자를
+ 다시 저장하지 않는다.
+
+ 따라서 단위를 반복해서 왕복해도
+ 반올림 오차가 누적되지 않는다.
+*/
 
 function changeWeightUnit(next){
 
  if(next===state.unit)return;
 
+ // 중요:
+ // 여기서 saveWeightInput()을 호출하지 않는다.
+ // 내부의 정밀한 state.weightKg를 그대로 유지한다.
+
  state.unit=next;
 
  if(state.weightKg!==null){
 
-  let converted;
+  const converted=
+   next==="kg"
+    ?state.weightKg
+    :state.weightKg*LB_PER_KG;
 
-  if(next===state.weightSourceUnit){
-   converted=state.weightSourceValue;
-  }else if(next==="kg"){
-   converted=String(state.weightKg);
-  }else{
-   converted=String(
-    Number(
-     (state.weightKg*LB_PER_KG).toFixed(4)
-    )
-   );
-  }
+  const convertedText=
+   formatConvertedWeight(converted);
 
-  $("weight").value=converted;
+  $("weight").value=convertedText;
+
+  const normalLimit=next==="kg"?4:5;
+  const digits=integerDigits(convertedText);
+
+  state.weightIsConverted=digits>normalLimit;
+
+  state.convertedIntegerLimit=
+   state.weightIsConverted?digits:0;
+
+ }else{
+
+  $("weight").value="";
+  state.weightIsConverted=false;
+  state.convertedIntegerLimit=0;
  }
+
+ lastValidWeight=$("weight").value;
 
  setActive();
  render();
 }
+
+/*
+ 중량 입력 전 제한
+
+ 삭제는 허용.
+ 숫자 추가 및 선택 영역 교체는
+ 변경 후 결과를 기준으로 검사.
+*/
+
+$("weight").addEventListener("beforeinput",event=>{
+
+ if(
+  event.inputType&&
+  event.inputType.startsWith("delete")
+ ){
+  return;
+ }
+
+ if(event.isComposing)return;
+
+ const input=$("weight");
+
+ let inserted=event.data;
+
+ if(
+  inserted===null&&
+  event.inputType==="insertFromPaste"&&
+  event.dataTransfer
+ ){
+  inserted=event.dataTransfer.getData("text");
+ }
+
+ if(inserted===null)return;
+
+ const start=input.selectionStart;
+ const end=input.selectionEnd;
+
+ const candidate=
+  input.value.slice(0,start)+
+  inserted+
+  input.value.slice(end);
+
+ if(!isValidWeight(candidate)){
+  event.preventDefault();
+ }
+});
+
+/*
+ 붙여넣기 제한
+*/
+
+$("weight").addEventListener("paste",event=>{
+
+ const input=$("weight");
+ const pasted=event.clipboardData.getData("text");
+
+ const start=input.selectionStart;
+ const end=input.selectionEnd;
+
+ const candidate=
+  input.value.slice(0,start)+
+  pasted+
+  input.value.slice(end);
+
+ if(!isValidWeight(candidate)){
+  event.preventDefault();
+ }
+});
+
+/*
+ 중량 입력 후 상태 갱신
+*/
+
+$("weight").addEventListener("input",()=>{
+
+ const input=$("weight");
+ const value=input.value;
+
+ if(!isValidWeight(value)){
+
+  input.value=lastValidWeight;
+
+ }else{
+
+  lastValidWeight=value;
+
+  updateConvertedLimit(value);
+ }
+
+ // 직접 입력하거나 수정한 경우에만
+ // 내부 기준 중량을 새로 계산한다.
+ saveWeightInput();
+
+ render();
+});
 
 function setActive(){
 
@@ -969,9 +1105,7 @@ function setActive(){
    button.dataset.exercise===state.exercise;
 
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
+  button.setAttribute("aria-pressed",String(selected));
  });
 
  document.querySelectorAll("[data-unit]")
@@ -981,9 +1115,7 @@ function setActive(){
    button.dataset.unit===state.unit;
 
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
+  button.setAttribute("aria-pressed",String(selected));
  });
 
  document.querySelectorAll("[data-round]")
@@ -993,9 +1125,7 @@ function setActive(){
   const selected=round===state.round;
 
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
+  button.setAttribute("aria-pressed",String(selected));
 
   button.textContent=
    button.dataset.round+state.unit;
@@ -1008,9 +1138,7 @@ function setActive(){
    button.dataset.tab===state.tab;
 
   button.classList.toggle("active",selected);
-  button.setAttribute(
-   "aria-pressed",String(selected)
-  );
+  button.setAttribute("aria-pressed",String(selected));
  });
 }
 
@@ -1019,14 +1147,18 @@ function render(){
  const rawW=$("weight").value.trim();
  const rawR=$("reps").value.trim();
 
- const w=Number(rawW);
  const r=Number(rawR);
 
  const validW=
-  rawW!==""&&Number.isFinite(w)&&w>=0;
+  rawW!==""&&
+  rawW!=="."&&
+  Number.isFinite(state.weightKg)&&
+  state.weightKg>0;
 
  const validR=
-  rawR!==""&&isValidReps(rawR)&&rawR!=="";
+  rawR!==""&&
+  isValidReps(rawR)&&
+  rawR!=="";
 
  $("weightUnit").textContent=state.unit;
  $("resultUnit").textContent=state.unit;
@@ -1053,10 +1185,7 @@ function render(){
   return;
  }
 
- const weightKg=
-  state.unit==="kg"
-   ?w
-   :w/LB_PER_KG;
+ const weightKg=state.weightKg;
 
  let oneRmKg;
 
@@ -1082,15 +1211,17 @@ function render(){
 
    const targetReps=i+1;
 
-   const predicted=
+   const predictedKg=
     state.exercise==="기타"
-     ?oneRm*repPercent[i]/100
-     :oneRm/exerciseFactors[state.exercise][i];
+     ?oneRmKg*repPercent[i]/100
+     :oneRmKg/exerciseFactors[state.exercise][i];
+
+   const predicted=displayFromKg(predictedKg);
 
    const percentage=
-    oneRm===0
+    oneRmKg===0
      ?"0.0"
-     :(predicted/oneRm*100).toFixed(1);
+     :(predictedKg/oneRmKg*100).toFixed(1);
 
    const formatted=format(predicted);
 
@@ -1189,36 +1320,28 @@ document.querySelectorAll("[data-tab]")
  });
 });
 
-/* 중량 입력칸 커서를 항상 숫자 맨 뒤로 이동 */
-
-function moveWeightCaretToEnd(){
-
- const input=$("weight");
- const length=input.value.length;
-
- input.setSelectionRange(length,length);
-}
+/*
+ 최초 포커스 시 커서를 끝으로 이동.
+ 이후 커서 이동 및 숫자 일부 수정은 허용.
+*/
 
 $("weight").addEventListener("focus",()=>{
 
+ const input=$("weight");
+
  requestAnimationFrame(()=>{
-  moveWeightCaretToEnd();
+
+  if(document.activeElement!==input)return;
+
+  const length=input.value.length;
+
+  input.setSelectionRange(length,length);
+
  });
 
 });
 
-$("weight").addEventListener("click",()=>{
-
- moveWeightCaretToEnd();
-
-});
-
-$("weight").addEventListener("input",()=>{
- saveWeightInput();
- render();
-});
-
-/* 키보드 완료 버튼을 누르면 입력을 마치고 키보드 닫기 */
+/* 키보드 완료 버튼 */
 
 ["weight","reps"].forEach(id=>{
 
@@ -1235,7 +1358,7 @@ $("weight").addEventListener("input",()=>{
 
 });
 
-/* 횟수 입력칸에 포커스하면 기존 숫자 지우기 */
+/* 횟수 입력칸 포커스 시 초기화 */
 
 $("reps").addEventListener("focus",()=>{
 
@@ -1298,8 +1421,9 @@ $("reps").addEventListener("input",()=>{
  render();
 });
 
-/* 빈 공간과 결과 상자 등의 더블탭 확대 방지
-   버튼과 입력 요소의 기본 동작은 유지 */
+/*
+ 더블탭 확대 방지
+*/
 
 let lastTouchEnd=0;
 
