@@ -10,24 +10,6 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <title>BARBELLIAN · 1RM 계산기</title>
 
-<!-- iPhone 홈 화면 앱 실행 감지 -->
-<script>
-(()=>{
- const isIOS =
-  /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-  (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
-
- const isStandalone =
-  navigator.standalone===true ||
-  window.matchMedia("(display-mode: standalone)").matches;
-
- if(isIOS && isStandalone){
-  document.documentElement.classList.add("ios-pwa");
-  window.__barbellianSplashStart=Date.now();
- }
-})();
-</script>
-
 <style>
 :root{
  --black:#111;
@@ -56,53 +38,6 @@ body{
 
 button,input{font-family:inherit;}
 button{-webkit-appearance:none;appearance:none;}
-
-/* iPhone 시작 화면 */
-
-#appSplash{
- display:none;
- position:fixed;
- inset:0;
- z-index:99999;
- background:#fff;
- align-items:center;
- justify-content:center;
- opacity:1;
- transition:opacity .25s ease;
-}
-
-.ios-pwa #appSplash{
- display:flex;
-}
-
-#appSplash img{
- position:absolute;
- width:16vw;
- max-width:132px;
- min-width:64px;
- height:auto;
- object-fit:contain;
- left:50%;
- top:50%;
- transform:translate(-50%,-50%);
-}
-
-#appSplash .splash-title{
- position:absolute;
- bottom:calc(env(safe-area-inset-bottom, 0px) + 6vh);
- left:0;
- width:100%;
- text-align:center;
- font-size:17px;
- font-weight:400;
- color:#333;
- letter-spacing:-.03em;
-}
-
-#appSplash.hide{
- opacity:0;
- pointer-events:none;
-}
 
 main{
  max-width:620px;
@@ -682,15 +617,6 @@ details[open] summary:after{content:"－";}
 </head>
 
 <body>
-
-<!-- iPhone 전용 시작 화면 -->
-<div id="appSplash" aria-hidden="true">
- <img src="./icon-512.png" alt="">
- <div class="splash-title">
-  BARBELLIAN 1RM 계산기
- </div>
-</div>
-
 <main>
 <div class="shell">
 
@@ -898,6 +824,16 @@ function setWeightError(message=""){
  $("weightError").textContent=message;
 }
 
+/*
+ 입력 제한 기준
+
+ kg: 정수 4자리
+ lb: 정수 5자리
+ 공통: 소수점 이하 4자리
+
+ 제한 초과 시에만 경고문구 반환.
+*/
+
 function getWeightError(value){
 
  if(value==="")return "";
@@ -924,16 +860,32 @@ function getWeightError(value){
  return "";
 }
 
+/*
+ 입력 형식 검사
+
+ 잘못된 형식은 경고 없이 차단.
+ 정수부 및 소수부 자릿수 검사는
+ 별도 함수에서 처리.
+*/
+
 function isValidWeightSyntax(value){
 
  if(value==="")return true;
 
+ // 0 단독 또는 0.xxx 허용
  if(value.startsWith("0")){
   return /^0(?:\.\d*)?$/.test(value);
  }
 
+ // 정수 또는 정수.소수 형식
  return /^[1-9]\d*(?:\.\d*)?$/.test(value);
 }
+
+/*
+ 실제 입력 가능 여부
+
+ 형식 오류와 자릿수 초과를 구분.
+*/
 
 function isValidWeight(value){
 
@@ -947,6 +899,10 @@ function isValidWeight(value){
 function isValidReps(value){
  return value===""||/^(?:[1-9]|1[0-2])$/.test(value);
 }
+
+/*
+ 백스페이스로 숫자 하나가 삭제됐는지 검사
+*/
 
 function isSingleDigitDeletion(previous,current){
 
@@ -964,6 +920,10 @@ function isSingleDigitDeletion(previous,current){
 
  return false;
 }
+
+/*
+ 첫 번째 소수점 입력인지 검사
+*/
 
 function isFirstDecimalPoint(previous,current,event){
 
@@ -1060,6 +1020,10 @@ function updateConvertedLimit(value){
  }
 }
 
+/*
+ 단위 변환
+*/
+
 function changeWeightUnit(next){
 
  if(next===state.unit)return;
@@ -1101,6 +1065,14 @@ function changeWeightUnit(next){
  render();
 }
 
+/*
+ 중량 입력 전 검사
+
+ 1. 자릿수 초과 시에만 경고.
+ 2. 형식 오류는 경고 없이 차단.
+ 3. 삭제 입력은 input 이벤트에서 처리.
+*/
+
 $("weight").addEventListener("beforeinput",event=>{
 
  if(
@@ -1134,19 +1106,27 @@ $("weight").addEventListener("beforeinput",event=>{
   inserted+
   input.value.slice(end);
 
+ // 형식 오류는 조용히 차단
  if(!isValidWeightSyntax(candidate)){
   event.preventDefault();
   return;
  }
 
+ // 자릿수 초과인 경우에만 경고
  const error=getWeightError(candidate);
 
  if(error){
+
   event.preventDefault();
   setWeightError(error);
+
  }
 
 });
+
+/*
+ 붙여넣기 검사
+*/
 
 $("weight").addEventListener("paste",event=>{
 
@@ -1175,12 +1155,24 @@ $("weight").addEventListener("paste",event=>{
 
 });
 
+/*
+ 실제 입력 변경 확인
+
+ 경고 해제 조건:
+ - 백스페이스로 숫자 하나 삭제
+ - 정수부 뒤 첫 번째 소수점 입력
+
+ 두 번째 소수점 입력은 차단되며
+ 기존 경고를 유지.
+*/
+
 $("weight").addEventListener("input",event=>{
 
  const input=$("weight");
  const value=input.value;
  const previous=lastValidWeight;
 
+ // 형식 오류는 경고 없이 이전 값으로 복구
  if(!isValidWeightSyntax(value)){
 
   input.value=previous;
@@ -1191,6 +1183,7 @@ $("weight").addEventListener("input",event=>{
   return;
  }
 
+ // 자릿수 초과는 경고 표시 후 복구
  const error=getWeightError(value);
 
  if(error){
@@ -1216,6 +1209,7 @@ $("weight").addEventListener("input",event=>{
 
  updateConvertedLimit(value);
 
+ // 지정한 두 가지 상황에서만 경고 해제
  if(deletedDigit||firstDecimal){
   setWeightError();
  }
@@ -1449,6 +1443,8 @@ document.querySelectorAll("[data-tab]")
  });
 });
 
+/* 중량 입력 시 커서를 끝으로 이동 */
+
 $("weight").addEventListener("focus",()=>{
 
  const input=$("weight");
@@ -1465,6 +1461,8 @@ $("weight").addEventListener("focus",()=>{
 
 });
 
+/* 키보드 완료 버튼 */
+
 ["weight","reps"].forEach(id=>{
 
  $(id).addEventListener("keydown",event=>{
@@ -1477,6 +1475,8 @@ $("weight").addEventListener("focus",()=>{
  });
 
 });
+
+/* 빈 공간 터치 시 키보드 닫기 (스크롤 제외) */
 
 let touchStartX=0;
 let touchStartY=0;
@@ -1496,6 +1496,7 @@ document.addEventListener("touchstart",event=>{
  touchStartY=event.touches[0].clientY;
 
 },{passive:true});
+
 
 document.addEventListener("touchend",event=>{
 
@@ -1517,6 +1518,8 @@ document.addEventListener("touchend",event=>{
 
 },{passive:true});
 
+/* 횟수 입력칸 포커스 시 초기화 */
+
 $("reps").addEventListener("focus",()=>{
 
  $("reps").value="";
@@ -1524,6 +1527,8 @@ $("reps").addEventListener("focus",()=>{
 
  render();
 });
+
+/* 횟수 입력 제한 */
 
 $("reps").addEventListener("beforeinput",event=>{
 
@@ -1575,6 +1580,8 @@ $("reps").addEventListener("input",()=>{
  render();
 });
 
+/* 더블탭 확대 방지 */
+
 let lastTouchEnd=0;
 
 document.addEventListener("touchend",event=>{
@@ -1593,6 +1600,7 @@ setActive();
 render();
 
 })();
+
 </script>
 
 <script>
@@ -1606,43 +1614,6 @@ if("serviceWorker" in navigator){
 
  });
 }
-</script>
-
-<!-- iPhone 시작 화면 종료 처리 -->
-<script>
-(()=>{
- const splash=document.getElementById("appSplash");
-
- if(!document.documentElement.classList.contains("ios-pwa")){
-  return;
- }
-
- const hideSplash=()=>{
-
-  const started=
-   window.__barbellianSplashStart || Date.now();
-
-  const elapsed=Date.now()-started;
-
-  const delay=Math.max(0,1000-elapsed);
-
-  setTimeout(()=>{
-
-   splash.classList.add("hide");
-
-   setTimeout(()=>{
-    splash.remove();
-   },300);
-
-  },delay);
- };
-
- if(document.readyState==="complete"){
-  hideSplash();
- }else{
-  window.addEventListener("load",hideSplash,{once:true});
- }
-})();
 </script>
 
 </body>
