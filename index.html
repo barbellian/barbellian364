@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <title>BARBELLIAN · 1RM 계산기</title>
 
-<!-- 설치형 앱 실행 감지 -->
+<!-- iPhone 홈 화면 앱 실행 감지 -->
 <script>
 (()=>{
  const isIOS =
@@ -21,13 +21,9 @@
   navigator.standalone===true ||
   window.matchMedia("(display-mode: standalone)").matches;
 
- if(isStandalone){
-  document.documentElement.classList.add("pwa-app");
-  window.__barbellianSplashStart=Date.now();
- }
-
  if(isIOS && isStandalone){
   document.documentElement.classList.add("ios-pwa");
+  window.__barbellianSplashStart=Date.now();
  }
 })();
 </script>
@@ -61,7 +57,7 @@ body{
 button,input{font-family:inherit;}
 button{-webkit-appearance:none;appearance:none;}
 
-/* 설치형 앱 시작 화면 */
+/* iPhone 시작 화면 */
 
 #appSplash{
  display:none;
@@ -75,13 +71,13 @@ button{-webkit-appearance:none;appearance:none;}
  transition:opacity .25s ease;
 }
 
-.pwa-app #appSplash{
+.ios-pwa #appSplash{
  display:flex;
 }
 
 #appSplash img{
  position:absolute;
- width:28vw;
+ width:16vw;
  max-width:132px;
  min-width:64px;
  height:auto;
@@ -687,7 +683,7 @@ details[open] summary:after{content:"－";}
 
 <body>
 
-<!-- 설치형 앱 공통 시작 화면 -->
+<!-- iPhone 전용 시작 화면 -->
 <div id="appSplash" aria-hidden="true">
  <img src="./icon-512.png" alt="">
  <div class="splash-title">
@@ -1612,12 +1608,12 @@ if("serviceWorker" in navigator){
 }
 </script>
 
-<!-- 설치형 앱 시작 화면 종료 처리 -->
+<!-- iPhone 시작 화면 종료 처리 -->
 <script>
 (()=>{
  const splash=document.getElementById("appSplash");
 
- if(!document.documentElement.classList.contains("pwa-app")){
+ if(!document.documentElement.classList.contains("ios-pwa")){
   return;
  }
 
