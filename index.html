@@ -305,6 +305,11 @@ input:focus{
  margin-top:-2px;
 }
 
+/* 경고 문구가 있을 때만 1RM 박스 간격 확대 */
+.fields:has(#weightError:not(:empty)) + .result{
+ margin-top:18px;
+}
+
 .result-heading{
  display:flex;
  align-items:center;
