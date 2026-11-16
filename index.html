@@ -1472,6 +1472,25 @@ $("weight").addEventListener("focus",()=>{
 
 });
 
+/* 입력칸 바깥 터치 시 키보드 닫기 (iPhone 대응) */
+
+document.addEventListener("touchstart",event=>{
+
+ const active=document.activeElement;
+
+ if(
+  !active ||
+  (active.id!=="weight" && active.id!=="reps")
+ )return;
+
+ // 중량 또는 횟수 입력칸을 터치한 경우는 제외
+ if(event.target.closest("#weight, #reps"))return;
+
+ // 입력 포커스 해제
+ active.blur();
+
+},{passive:true});
+
 /* 횟수 입력칸 포커스 시 초기화 */
 
 $("reps").addEventListener("focus",()=>{
