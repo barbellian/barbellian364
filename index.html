@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ko">
 <head>
@@ -283,6 +284,7 @@ input:focus{
  color:#a11;
  font-weight:700;
  padding-top:5px;
+ line-height:1.4;
 }
 
 .result{
@@ -681,6 +683,9 @@ enterkeyhint="done"
 autocomplete="off"
 placeholder="중량 입력"
 >
+
+<div id="weightError" class="error"
+aria-live="polite"></div>
 </div>
 
 <div>
@@ -824,18 +829,65 @@ let lastValidReps="";
 let lastValidWeight="";
 
 function integerDigits(value){
- const integerPart=value.split(".")[0];
- return integerPart.length;
+ return value.split(".")[0].length;
+}
+
+/* 경고 표시 및 해제 */
+
+function setWeightError(message=""){
+ $("weightError").textContent=message;
+}
+
+function getWeightError(value){
+
+ if(value==="")return "";
+
+ const normalLimit=state.unit==="kg"?4:5;
+
+ const integerLimit=
+  state.weightIsConverted
+   ?Math.max(normalLimit,state.convertedIntegerLimit)
+   :normalLimit;
+
+ const parts=value.split(".");
+ const integerPart=parts[0]||"";
+ const decimalPart=parts[1]||"";
+
+ // 정수부 자릿수 초과
+ if(integerPart.length>integerLimit){
+
+  if(state.weightIsConverted){
+   return "변환된 중량의 정수 자릿수를 더 늘릴 수 없습니다.";
+  }
+
+  return `${state.unit}은 정수 ${normalLimit}자리, 소수점 이하 4자리까지 입력 가능합니다.`;
+ }
+
+ // 소수부 자릿수 초과
+ if(decimalPart.length>4){
+
+  return `${state.unit}은 정수 ${normalLimit}자리, 소수점 이하 4자리까지 입력 가능합니다.`;
+ }
+
+ // 0으로 시작하는 잘못된 입력
+ if(
+  value.startsWith("0")&&
+  !/^0(?:\.\d{0,4})?$/.test(value)
+ ){
+
+  return "0 뒤에는 소수점만 입력할 수 있습니다.";
+ }
+
+ return "";
 }
 
 function isValidWeight(value){
 
  if(value==="")return true;
 
- // 0으로 시작하는 경우:
- // 0 뒤에는 소수점만 허용.
- // 0, 0., 0.1, 0.0001 허용.
- // 00, 01, 0000 등 차단.
+ // 0 뒤에는 소수점만 허용
+ // 0, 0., 0.1, 0.0001 허용
+ // 00, 01, 0000 차단
  if(value.startsWith("0")){
   return /^0(?:\.\d{0,4})?$/.test(value);
  }
@@ -847,8 +899,6 @@ function isValidWeight(value){
    ?Math.max(normalLimit,state.convertedIntegerLimit)
    :normalLimit;
 
- // 첫 숫자는 1~9만 허용.
- // 정수부 자릿수 제한과 소수점 이하 4자리 제한 유지.
  const pattern=new RegExp(
   "^[1-9]\\d{0,"+(integerLimit-1)+"}(?:\\.\\d{0,4})?$"
  );
@@ -939,7 +989,7 @@ function saveWeightInput(){
  기존 자릿수를 초과하는 숫자 추가는 차단.
 
  정수부가 일반 입력 제한 이하로 줄어들면
- 즉시 일반 입력 제한으로 복귀.
+ 일반 입력 제한으로 복귀.
 */
 
 function updateConvertedLimit(value){
@@ -959,23 +1009,16 @@ function updateConvertedLimit(value){
 /*
  단위 변환
 
- state.weightKg에는 최초 입력값 또는 사용자가
- 직접 수정한 값의 정밀한 kg 기준값을 보관한다.
+ 내부 정밀도는 kg 기준으로 유지.
+ 단위 변경 시 반올림 오차가 누적되지 않음.
 
- 단위 변경 시 화면에 표시된 반올림 숫자를
- 다시 저장하지 않는다.
-
- 따라서 단위를 반복해서 왕복해도
- 반올림 오차가 누적되지 않는다.
+ 변환으로 입력 제한을 초과한 경우
+ 경고를 표시하지 않음.
 */
 
 function changeWeightUnit(next){
 
  if(next===state.unit)return;
-
- // 중요:
- // 여기서 saveWeightInput()을 호출하지 않는다.
- // 내부의 정밀한 state.weightKg를 그대로 유지.
 
  state.unit=next;
 
@@ -1008,6 +1051,9 @@ function changeWeightUnit(next){
 
  lastValidWeight=$("weight").value;
 
+ // 단위 변환 자체로는 경고 표시 안 함
+ setWeightError();
+
  setActive();
  render();
 }
@@ -1018,6 +1064,8 @@ function changeWeightUnit(next){
  삭제는 허용.
  숫자 추가 및 선택 영역 교체는
  변경 후 결과를 기준으로 검사.
+
+ 입력 제한을 초과하려는 순간 경고 표시.
 */
 
 $("weight").addEventListener("beforeinput",event=>{
@@ -1054,7 +1102,15 @@ $("weight").addEventListener("beforeinput",event=>{
   input.value.slice(end);
 
  if(!isValidWeight(candidate)){
+
   event.preventDefault();
+
+  setWeightError(getWeightError(candidate));
+
+ }else{
+
+  // 유효한 입력으로 제한 문제가 해결되면 경고 해제
+  setWeightError();
  }
 });
 
@@ -1076,12 +1132,19 @@ $("weight").addEventListener("paste",event=>{
   input.value.slice(end);
 
  if(!isValidWeight(candidate)){
+
   event.preventDefault();
+
+  setWeightError(getWeightError(candidate));
+
  }
 });
 
 /*
  중량 입력 후 상태 갱신
+
+ 삭제하여 제한 이내로 돌아오면
+ 경고 자동 해제.
 */
 
 $("weight").addEventListener("input",()=>{
@@ -1098,10 +1161,11 @@ $("weight").addEventListener("input",()=>{
   lastValidWeight=value;
 
   updateConvertedLimit(value);
+
+  // 현재 입력값이 정상 범위라면 경고 해제
+  setWeightError();
  }
 
- // 직접 입력하거나 수정한 경우에만
- // 내부 기준 중량을 새로 계산한다.
  saveWeightInput();
 
  render();
