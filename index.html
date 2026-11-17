@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ko">
 <head>
@@ -1608,17 +1609,18 @@ function render(){
  let formulaMeta="";
  if(state.exercise==="기본"){
   const names=getSelectedFormulaNames();
-  formulaMeta=names.length===1?` · ${names[0]}`:` · ${names.join(" + ")} 평균`;
+  formulaMeta=names.length===1
+   ?names[0]
+   :`${names.join(" + ")} 평균`;
  }
 
- /* 기본이라는 종목명은 제외하고 공식 이름만 표시 */
-let formulaMeta="";
-if(state.exercise==="기본"){
-  const names=getSelectedFormulaNames();
-  formulaMeta=names.length===1?names[0]:`${names.join(" + ")} 평균`;
-}
+ /* 기본 종목은 공식 이름부터 표시하고, 다른 종목은 종목명을 표시 */
+ const resultLabel=state.exercise==="기본"
+  ?formulaMeta
+  :state.exercise;
 
-$("resultMeta").textContent=`${formulaMeta}${formulaMeta?" · ":""}${rawW}${state.unit} × ${r}회`;
+ $("resultMeta").textContent=
+  `${resultLabel} · ${rawW}${state.unit} × ${r}회`;
 
  const repResults=Array.from({length:12},(_,i)=>{
   const targetReps=i+1;
