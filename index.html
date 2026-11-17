@@ -408,6 +408,71 @@ h1{
  color:#777;
 }
 
+/* 화면 중앙 토스트 알림 */
+.center-toast{
+ position:fixed;
+ top:50%;
+ left:50%;
+ z-index:2000;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:9px;
+ width:max-content;
+ max-width:calc(100vw - 40px);
+ padding:14px 19px;
+ border-radius:14px;
+ background:#222;
+ color:#fff;
+ box-shadow:0 5px 22px #00000035;
+ font-size:14px;
+ font-weight:800;
+ line-height:1.4;
+ white-space:nowrap;
+ pointer-events:none;
+ opacity:0;
+ visibility:hidden;
+ transform:translate(-50%,-45%) scale(.96);
+}
+
+.center-toast.show{
+ visibility:visible;
+ animation:toastShow 1.8s ease forwards;
+}
+
+.center-toast-icon{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ width:19px;
+ height:19px;
+ flex-shrink:0;
+ border:1.7px solid #fff;
+ border-radius:50%;
+ font-size:13px;
+ font-weight:900;
+ line-height:1;
+}
+
+@keyframes toastShow{
+ 0%{
+  opacity:0;
+  transform:translate(-50%,-45%) scale(.96);
+ }
+ 12%{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+ }
+ 78%{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+ }
+ 100%{
+  opacity:0;
+  transform:translate(-50%,-50%) scale(1);
+ }
+}
+
 .rounding-header{
  display:flex;
  align-items:center;
@@ -872,6 +937,13 @@ details[open] summary:after{content:"－";}
 </head>
 
 <body>
+
+<!-- 중앙 토스트 알림 -->
+<div class="center-toast" id="centerToast" role="status" aria-live="polite">
+ <span class="center-toast-icon">!</span>
+ <span>최소 하나의 공식을 선택해 주세요.</span>
+</div>
+
 <main>
 <div class="shell">
 
@@ -1160,6 +1232,26 @@ stroke-linejoin="round" aria-hidden="true">
 "use strict";
 
 const $=id=>document.getElementById(id);
+
+/* 중앙 토스트 표시 */
+let toastTimer=null;
+
+function showCenterToast(){
+ const toast=$("centerToast");
+
+ clearTimeout(toastTimer);
+
+ toast.classList.remove("show");
+
+ /* 기존 애니메이션을 초기화하고 다시 실행 */
+ void toast.offsetWidth;
+
+ toast.classList.add("show");
+
+ toastTimer=setTimeout(()=>{
+  toast.classList.remove("show");
+ },1800);
+}
 
 const FORMULAS={
  nsca:"NSCA",
@@ -1569,10 +1661,10 @@ function openFormulaDialog(){
  updateFormulaUI();
 }
 
-/* 공식이 하나도 선택되지 않았다면 창을 닫지 않음 */
+/* 공식이 하나도 선택되지 않았다면 중앙 토스트 표시 */
 function closeFormulaDialog(){
  if(state.formulas.length===0){
-  alert("하나 이상의 공식을 선택해주세요.");
+  showCenterToast();
   return;
  }
 
