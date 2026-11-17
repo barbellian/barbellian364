@@ -1585,7 +1585,7 @@ function render(){
  if(!validW||!validR){
   $("oneRm").textContent="--";
   $("resultMeta").textContent="중량과 횟수를 입력해 주세요.";
-  $("repsView").innerHTML="";
+  $("repsView").innerHTML='<div style="grid-column:1 / -1;padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
   $("percentView").innerHTML='<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
   return;
  }
