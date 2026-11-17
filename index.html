@@ -17,6 +17,9 @@
  --line:#c9c9c9;
  --pale:#ededed;
  --white:#fff;
+ --blue-bg:#EAF4FF;
+ --blue-border:#A8D1FA;
+ --blue-text:#2563A6;
 }
 
 *{box-sizing:border-box;}
@@ -176,10 +179,190 @@ h1{
  line-height:1.35;
 }
 
+.choice-basic-wrap{
+ grid-column:1 / -1;
+ display:flex;
+ width:100%;
+ min-width:0;
+ min-height:49px;
+}
+
+.choice-basic{
+ flex:1;
+ min-width:0;
+ border:1.5px solid #bbb;
+ border-right:0;
+ border-radius:11px 0 0 11px;
+ background:#fff;
+ color:#161616;
+ font-size:15px;
+ font-weight:800;
+ padding:10px 5px;
+ line-height:1.35;
+}
+
+.formula-trigger{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:4px;
+ width:100px;
+ flex-shrink:0;
+ border:1.5px solid #bbb;
+ border-radius:0 11px 11px 0;
+ background:#fff;
+ color:#333;
+ font-size:11px;
+ font-weight:850;
+ padding:5px 3px;
+}
+
+.formula-trigger .arrow{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ height:1em;
+ font-size:13px;
+ line-height:1;
+ transform:translateY(-1px);
+}
+
+.choice-basic-wrap.active .choice-basic{
+ background:#111;
+ color:#fff;
+ border-color:#111;
+}
+
+/* 기본 선택 시 공식 버튼 라이트 그레이 */
+.choice-basic-wrap.active .formula-trigger{
+ background:#ededed;
+ color:#333;
+ border-color:#c9c9c9;
+ border-left:1px solid #c9c9c9;
+}
+
 .choice.active{
  background:#111;
  color:#fff;
  border-color:#111;
+}
+
+/* 공식 선택 창 */
+.formula-backdrop{
+ position:fixed;
+ inset:0;
+ z-index:1000;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ background:rgba(0,0,0,.48);
+}
+
+.formula-backdrop[hidden]{display:none;}
+
+.formula-dialog{
+ width:100%;
+ max-width:360px;
+ max-height:calc(100dvh - 40px);
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ background:#fff;
+ border-radius:19px;
+ padding:20px 18px 17px;
+ box-shadow:0 12px 40px #00000030;
+}
+
+/* 옵션 창 상단 고정 */
+.formula-dialog-header{
+ position:sticky;
+ top:-20px;
+ z-index:10;
+ background:#fff;
+ margin:-20px -18px 0;
+ padding:20px 18px 0;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+}
+
+.formula-dialog-title{
+ font-size:19px;
+ font-weight:900;
+}
+
+.formula-close{
+ width:32px;
+ height:32px;
+ border:0;
+ border-radius:50%;
+ background:#ededed;
+ color:#333;
+ font-size:21px;
+ line-height:1;
+ flex-shrink:0;
+}
+
+.formula-description{
+ margin:5px 0 16px;
+ font-size:12px;
+ line-height:1.5;
+ color:#666;
+}
+
+.formula-options{
+ display:flex;
+ flex-direction:column;
+ gap:8px;
+}
+
+.formula-option{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ width:100%;
+ min-height:54px;
+ padding:10px 13px;
+ border:1.5px solid #ccc;
+ border-radius:11px;
+ background:#fff;
+ color:#111;
+ text-align:left;
+}
+
+.formula-option.active{
+ border-color:#111;
+ background:#f1f1f1;
+}
+
+.formula-option-main{
+ display:flex;
+ flex-direction:column;
+ gap:3px;
+}
+
+.formula-option-name{
+ font-size:15px;
+ font-weight:900;
+}
+
+.formula-option-sub{
+ font-size:11px;
+ color:#666;
+ font-weight:600;
+}
+
+.formula-option-check{
+ font-size:17px;
+ font-weight:900;
+}
+
+.formula-dialog-note{
+ margin:14px 2px 0;
+ font-size:10.5px;
+ line-height:1.5;
+ color:#777;
 }
 
 .rounding-header{
@@ -590,6 +773,9 @@ details[open] summary:after{content:"－";}
  }
 
  .choice{font-size:14px;}
+ .choice-basic{font-size:14px;}
+ .formula-trigger{width:96px;}
+
  .rounding-header{gap:5px;}
  .rounding-header .section-title{font-size:21px;}
 
@@ -639,18 +825,142 @@ details[open] summary:after{content:"－";}
 <div class="exercise-wrap">
 <div class="exercise" id="exerciseChoices">
 
+<div class="choice-basic-wrap" id="basicChoiceWrap">
+
+<button type="button"
+ class="choice-basic"
+ id="basicChoice"
+ data-exercise="기본"
+ aria-pressed="false">
+기본
+</button>
+
+<button type="button"
+ class="formula-trigger"
+ id="formulaTrigger"
+ aria-label="계산 공식 선택"
+ aria-haspopup="dialog"
+ aria-expanded="false">
+<span id="formulaTriggerLabel">공식 선택</span>
+<span class="arrow">⌄</span>
+</button>
+
+</div>
+
 <button type="button" class="choice active" data-exercise="스쿼트">스쿼트</button>
 <button type="button" class="choice" data-exercise="벤치프레스">벤치프레스</button>
 <button type="button" class="choice" data-exercise="데드리프트">데드리프트</button>
 <button type="button" class="choice" data-exercise="오버헤드프레스">오버헤드프레스</button>
-<button type="button" class="choice" data-exercise="기타">기타</button>
 
 </div>
+</div>
+
+<!-- 공식 선택 창 -->
+<div class="formula-backdrop" id="formulaBackdrop" hidden>
+
+<section class="formula-dialog"
+ role="dialog"
+ aria-modal="true"
+ aria-labelledby="formulaDialogTitle">
+
+<div class="formula-dialog-header">
+<div class="formula-dialog-title" id="formulaDialogTitle">
+계산 공식 선택
+</div>
+
+<button type="button"
+ class="formula-close"
+ id="formulaClose"
+ aria-label="닫기">
+×
+</button>
+</div>
+
+<p class="formula-description">
+기본 종목에 적용할 계산 공식을 선택합니다.
+</p>
+
+<div class="formula-options">
+
+<button type="button"
+ class="formula-option active"
+ data-formula="nsca"
+ aria-pressed="true">
+<span class="formula-option-main">
+<span class="formula-option-name">NSCA</span>
+<span class="formula-option-sub">반복 횟수별 공통 기준</span>
+</span>
+<span class="formula-option-check">✓</span>
+</button>
+
+<button type="button" class="formula-option" data-formula="epley" aria-pressed="false">
+<span class="formula-option-main">
+<span class="formula-option-name">Epley</span>
+<span class="formula-option-sub">중량 × (1 + 횟수 ÷ 30)</span>
+</span>
+<span class="formula-option-check"></span>
+</button>
+
+<button type="button" class="formula-option" data-formula="brzycki" aria-pressed="false">
+<span class="formula-option-main">
+<span class="formula-option-name">Brzycki</span>
+<span class="formula-option-sub">중량 × 36 ÷ (37 - 횟수)</span>
+</span>
+<span class="formula-option-check"></span>
+</button>
+
+<button type="button" class="formula-option" data-formula="lombardi" aria-pressed="false">
+<span class="formula-option-main">
+<span class="formula-option-name">Lombardi</span>
+<span class="formula-option-sub">중량 × 횟수의 0.10승</span>
+</span>
+<span class="formula-option-check"></span>
+</button>
+
+<button type="button" class="formula-option" data-formula="oconnor" aria-pressed="false">
+<span class="formula-option-main">
+<span class="formula-option-name">O'Connor</span>
+<span class="formula-option-sub">중량 × (1 + 0.025 × 횟수)</span>
+</span>
+<span class="formula-option-check"></span>
+</button>
+
+<button type="button" class="formula-option" data-formula="lander" aria-pressed="false">
+<span class="formula-option-main">
+<span class="formula-option-name">Lander</span>
+<span class="formula-option-sub">100 × 중량 ÷ (101.3 - 2.67123 × 횟수)</span>
+</span>
+<span class="formula-option-check"></span>
+</button>
+
+<button type="button" class="formula-option" data-formula="wathan" aria-pressed="false">
+<span class="formula-option-main">
+<span class="formula-option-name">Wathan</span>
+<span class="formula-option-sub">지수함수 기반 예측식</span>
+</span>
+<span class="formula-option-check"></span>
+</button>
+
+<button type="button" class="formula-option" data-formula="mayhew" aria-pressed="false">
+<span class="formula-option-main">
+<span class="formula-option-name">Mayhew</span>
+<span class="formula-option-sub">지수함수 기반 예측식</span>
+</span>
+<span class="formula-option-check"></span>
+</button>
+
+</div>
+
+<p class="formula-dialog-note">
+여러 공식을 선택하면 각 공식의 1RM 추정값을 산술평균합니다.<br>
+최소 하나의 공식은 선택되어 있어야 합니다. 선택 내용은 자동 저장됩니다.
+</p>
+
+</section>
 </div>
 
 <div class="rounding-header">
 <div class="section-title">산출 중량 단위</div>
-
 <div class="unit-control">
 <div class="unit-switch" id="units">
 <button type="button" class="active" data-unit="kg">kg</button>
@@ -670,26 +980,21 @@ details[open] summary:after{content:"－";}
 </p>
 
 <div class="fields">
-
 <div>
 <div class="field-label">
 중량 (<span id="weightUnit">kg</span>)
 </div>
-
 <input id="weight" type="text" inputmode="decimal"
 enterkeyhint="done" autocomplete="off" placeholder="중량 입력">
-
 <div id="weightError" class="error" aria-live="polite"></div>
 </div>
 
 <div>
 <div class="field-label">횟수 (1~12회)</div>
-
 <input id="reps" type="text" inputmode="numeric"
 pattern="[0-9]*" enterkeyhint="done"
 autocomplete="off" placeholder="횟수 입력">
 </div>
-
 </div>
 
 <section class="result" aria-live="polite">
@@ -697,11 +1002,9 @@ autocomplete="off" placeholder="횟수 입력">
 <div class="result-kicker">ESTIMATED 1RM</div>
 <div class="exercise-badge" id="exerciseBadge">스쿼트</div>
 </div>
-
 <div class="result-number">
 <span id="oneRm">--</span><small id="resultUnit">kg</small>
 </div>
-
 <div class="result-meta" id="resultMeta">
 중량과 횟수를 입력해 주세요.
 </div>
@@ -717,7 +1020,6 @@ autocomplete="off" placeholder="횟수 입력">
 
 <details>
 <summary>계산 방식 및 참고</summary>
-
 <div class="detail-content">
 
 <strong>
@@ -726,43 +1028,37 @@ autocomplete="off" placeholder="횟수 입력">
 
 NSCA(미국 체력관리학회) Training Load Chart와 스포츠 과학 분야의 1RM 예측 연구를 바탕으로, 종목별 특성을 반영한 보정 추정치입니다.
 
-<strong>기타</strong>
+<strong>기본</strong>
 
-NSCA(미국 체력관리학회) Training Load Chart를 기반으로 한 반복 횟수별 공통 기준 추정치.
+NSCA, Epley, Brzycki, Lombardi, O'Connor, Lander, Wathan, Mayhew 공식을 선택해 사용할 수 있습니다. 여러 공식을 선택하면 각 공식으로 계산한 1RM 추정값의 산술평균을 최종 1RM으로 표시합니다. 횟수별 중량도 각 공식의 예측값을 평균하여 산출합니다.
 
 <div class="detail-divider"></div>
 
 <strong>단위 변환 안내</strong>
-
 단위 변환 결과의 정수부는 자릿수 제한의 예외로 적용하며, 소수점 아래는 최대 4자리까지 반올림하여 표시합니다.
 
 <strong>문의 및 피드백</strong>
-
 앱 사용 중 발견한 오류나 버그, 개선 의견은 아래 이메일이나 유튜브·인스타 댓글로 작성해 주시면 앱을 개선하는 데 참고하겠습니다.<br>
 
 <strong>앱을 이용해주셔서 감사합니다.</strong>
-
 </div>
 </details>
 
 <div class="notice">
 <div class="notice-label">NOTICE</div>
-
 ※ 표시된 값은 추정치이며, 실제 수행 중량과는 차이가 있을 수 있습니다.<br>
 ※ 입력 중량이 너무 낮거나 반복 횟수가 많아질수록 추정 오차가 커질 수 있습니다.
 </div>
 
 <footer class="footer">
-
 <div class="social-links">
 
 <a class="social-link"
 href="https://youtube.com/@barbellian364"
 target="_blank" rel="noopener noreferrer"
 aria-label="BARBELLIAN 364+1 YouTube 채널">
-
 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
+<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6-6.3 3.6Z"/>
 </svg>
 <span>YouTube</span>
 </a>
@@ -773,7 +1069,6 @@ aria-label="BARBELLIAN 364+1 YouTube 채널">
 href="https://www.instagram.com/barbellian364"
 target="_blank" rel="noopener noreferrer"
 aria-label="BARBELLIAN 364+1 Instagram">
-
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 stroke-width="2" stroke-linecap="round"
 stroke-linejoin="round" aria-hidden="true">
@@ -785,11 +1080,7 @@ stroke-linejoin="round" aria-hidden="true">
 </a>
 
 </div>
-
-<div class="footer-brand">
-BARBELLIAN 364+1
-</div>
-
+<div class="footer-brand">BARBELLIAN 364+1</div>
 </footer>
 
 </div>
@@ -801,11 +1092,45 @@ BARBELLIAN 364+1
 
 const $=id=>document.getElementById(id);
 
+const FORMULAS={
+ nsca:"NSCA",
+ epley:"Epley",
+ brzycki:"Brzycki",
+ lombardi:"Lombardi",
+ oconnor:"O'Connor",
+ lander:"Lander",
+ wathan:"Wathan",
+ mayhew:"Mayhew"
+};
+
+function loadFormulas(){
+ try{
+  const saved=localStorage.getItem("barbellian_formulas");
+  if(saved){
+   const parsed=JSON.parse(saved);
+   if(Array.isArray(parsed)){
+    const valid=parsed.filter(
+     formula=>Object.prototype.hasOwnProperty.call(FORMULAS,formula)
+    );
+    if(valid.length>0)return [...new Set(valid)];
+   }
+  }
+  const oldSaved=localStorage.getItem("barbellian_formula");
+  if(Object.prototype.hasOwnProperty.call(FORMULAS,oldSaved)){
+   return [oldSaved];
+  }
+  return ["nsca"];
+ }catch(error){
+  return ["nsca"];
+ }
+}
+
 const state={
  exercise:"스쿼트",
  unit:"kg",
  round:1,
  tab:"reps",
+ formulas:loadFormulas(),
  weightKg:null,
  weightIsConverted:false,
  convertedIntegerLimit:0
@@ -816,6 +1141,12 @@ const LB_PER_KG=2.2046226218;
 let lastValidReps="";
 let lastValidWeight="";
 
+function saveFormulas(){
+ try{
+  localStorage.setItem("barbellian_formulas",JSON.stringify(state.formulas));
+ }catch(error){}
+}
+
 function integerDigits(value){
  return value.split(".")[0].length;
 }
@@ -824,75 +1155,35 @@ function setWeightError(message=""){
  $("weightError").textContent=message;
 }
 
-/*
- 입력 제한 기준
-
- kg: 정수 4자리
- lb: 정수 5자리
- 공통: 소수점 이하 4자리
-
- 제한 초과 시에만 경고문구 반환.
-*/
-
 function getWeightError(value){
-
  if(value==="")return "";
-
  const normalLimit=state.unit==="kg"?4:5;
-
- const integerLimit=
-  state.weightIsConverted
-   ?Math.max(normalLimit,state.convertedIntegerLimit)
-   :normalLimit;
-
+ const integerLimit=state.weightIsConverted
+  ?Math.max(normalLimit,state.convertedIntegerLimit)
+  :normalLimit;
  const parts=value.split(".");
  const integerPart=parts[0]||"";
  const decimalPart=parts[1]||"";
-
  if(integerPart.length>integerLimit){
   return `${state.unit}은 정수 ${normalLimit}자리, 소수점 이하 4자리까지 입력 가능합니다.`;
  }
-
  if(decimalPart.length>4){
   return `${state.unit}은 정수 ${normalLimit}자리, 소수점 이하 4자리까지 입력 가능합니다.`;
  }
-
  return "";
 }
 
-/*
- 입력 형식 검사
-
- 잘못된 형식은 경고 없이 차단.
- 정수부 및 소수부 자릿수 검사는
- 별도 함수에서 처리.
-*/
-
 function isValidWeightSyntax(value){
-
  if(value==="")return true;
-
- // 0 단독 또는 0.xxx 허용
  if(value.startsWith("0")){
   return /^0(?:\.\d*)?$/.test(value);
  }
-
- // 정수 또는 정수.소수 형식
  return /^[1-9]\d*(?:\.\d*)?$/.test(value);
 }
 
-/*
- 실제 입력 가능 여부
-
- 형식 오류와 자릿수 초과를 구분.
-*/
-
 function isValidWeight(value){
-
  if(!isValidWeightSyntax(value))return false;
-
  if(value==="")return true;
-
  return getWeightError(value)==="";
 }
 
@@ -900,33 +1191,17 @@ function isValidReps(value){
  return value===""||/^(?:[1-9]|1[0-2])$/.test(value);
 }
 
-/*
- 백스페이스로 숫자 하나가 삭제됐는지 검사
-*/
-
 function isSingleDigitDeletion(previous,current){
-
  if(previous.length!==current.length+1)return false;
-
  for(let i=0;i<previous.length;i++){
-
   if(!/\d/.test(previous[i]))continue;
-
-  const result=
-   previous.slice(0,i)+previous.slice(i+1);
-
+  const result=previous.slice(0,i)+previous.slice(i+1);
   if(result===current)return true;
  }
-
  return false;
 }
 
-/*
- 첫 번째 소수점 입력인지 검사
-*/
-
 function isFirstDecimalPoint(previous,current,event){
-
  return (
   event.inputType==="insertText"&&
   event.data==="."&&
@@ -958,26 +1233,73 @@ const exerciseFactors={
  ]
 };
 
+function getSelectedFormulaNames(){
+ return state.formulas.map(formula=>FORMULAS[formula]);
+}
+
+function calculateFormulaOneRm(formula,weight,reps){
+ if(reps===1)return weight;
+ switch(formula){
+  case "epley":return weight*(1+reps/30);
+  case "brzycki":return weight*36/(37-reps);
+  case "lombardi":return weight*Math.pow(reps,0.10);
+  case "oconnor":return weight*(1+0.025*reps);
+  case "lander":return 100*weight/(101.3-2.67123*reps);
+  case "wathan":return 100*weight/(48.8+53.8*Math.exp(-0.075*reps));
+  case "mayhew":return 100*weight/(52.2+41.9*Math.exp(-0.055*reps));
+  case "nsca":
+  default:return weight/(repPercent[reps-1]/100);
+ }
+}
+
+function calculateFormulaRepWeight(formula,oneRm,reps){
+ if(reps===1)return oneRm;
+ switch(formula){
+  case "epley":return oneRm/(1+reps/30);
+  case "brzycki":return oneRm*(37-reps)/36;
+  case "lombardi":return oneRm/Math.pow(reps,0.10);
+  case "oconnor":return oneRm/(1+0.025*reps);
+  case "lander":return oneRm*(101.3-2.67123*reps)/100;
+  case "wathan":return oneRm*(48.8+53.8*Math.exp(-0.075*reps))/100;
+  case "mayhew":return oneRm*(52.2+41.9*Math.exp(-0.055*reps))/100;
+  case "nsca":
+  default:return oneRm*repPercent[reps-1]/100;
+ }
+}
+
+function calculateBasicFormulaResults(weight,reps){
+ return state.formulas.map(formula=>({
+  formula,
+  oneRm:calculateFormulaOneRm(formula,weight,reps)
+ }));
+}
+
+function calculateBasicOneRm(weight,reps){
+ const results=calculateBasicFormulaResults(weight,reps);
+ const total=results.reduce((sum,result)=>sum+result.oneRm,0);
+ return total/results.length;
+}
+
+function calculateBasicRepWeight(formulaResults,reps){
+ const values=formulaResults.map(result=>{
+  return calculateFormulaRepWeight(result.formula,result.oneRm,reps);
+ });
+ const total=values.reduce((sum,value)=>sum+value,0);
+ return total/values.length;
+}
+
 function roundValue(value){
- return Math.round(
-  value/state.round+Number.EPSILON
- )*state.round;
+ return Math.round(value/state.round+Number.EPSILON)*state.round;
 }
 
 function format(value){
  const n=roundValue(value);
-
- if(state.round===1){
-  return String(Math.round(n));
- }
-
+ if(state.round===1)return String(Math.round(n));
  return n.toFixed(1);
 }
 
 function displayFromKg(kg){
- return state.unit==="kg"
-  ?kg
-  :kg*LB_PER_KG;
+ return state.unit==="kg"?kg:kg*LB_PER_KG;
 }
 
 function formatConvertedWeight(value){
@@ -986,431 +1308,300 @@ function formatConvertedWeight(value){
 }
 
 function saveWeightInput(){
-
  const raw=$("weight").value.trim();
-
  if(raw===""||raw==="."){
   state.weightKg=null;
   return;
  }
-
  const value=Number(raw);
-
  if(!Number.isFinite(value)){
   state.weightKg=null;
   return;
  }
-
- state.weightKg=
-  state.unit==="kg"
-   ?value
-   :value/LB_PER_KG;
+ state.weightKg=state.unit==="kg"?value:value/LB_PER_KG;
 }
 
 function updateConvertedLimit(value){
-
  if(!state.weightIsConverted)return;
-
  const digits=integerDigits(value);
  const normalLimit=state.unit==="kg"?4:5;
-
  if(digits<=normalLimit){
   state.weightIsConverted=false;
   state.convertedIntegerLimit=0;
  }
 }
 
-/*
- 단위 변환
-*/
-
 function changeWeightUnit(next){
-
  if(next===state.unit)return;
-
  state.unit=next;
-
  if(state.weightKg!==null){
-
-  const converted=
-   next==="kg"
-    ?state.weightKg
-    :state.weightKg*LB_PER_KG;
-
-  const convertedText=
-   formatConvertedWeight(converted);
-
+  const converted=next==="kg"
+   ?state.weightKg
+   :state.weightKg*LB_PER_KG;
+  const convertedText=formatConvertedWeight(converted);
   $("weight").value=convertedText;
-
   const normalLimit=next==="kg"?4:5;
   const digits=integerDigits(convertedText);
-
   state.weightIsConverted=digits>normalLimit;
-
-  state.convertedIntegerLimit=
-   state.weightIsConverted?digits:0;
-
+  state.convertedIntegerLimit=state.weightIsConverted?digits:0;
  }else{
-
   $("weight").value="";
   state.weightIsConverted=false;
   state.convertedIntegerLimit=0;
  }
-
  lastValidWeight=$("weight").value;
-
  setWeightError();
-
  setActive();
  render();
 }
 
-/*
- 중량 입력 전 검사
-
- 1. 자릿수 초과 시에만 경고.
- 2. 형식 오류는 경고 없이 차단.
- 3. 삭제 입력은 input 이벤트에서 처리.
-*/
-
 $("weight").addEventListener("beforeinput",event=>{
-
- if(
-  event.inputType&&
-  event.inputType.startsWith("delete")
- ){
-  return;
- }
-
+ if(event.inputType&&event.inputType.startsWith("delete"))return;
  if(event.isComposing)return;
-
  const input=$("weight");
-
  let inserted=event.data;
-
- if(
-  inserted===null&&
-  event.inputType==="insertFromPaste"&&
-  event.dataTransfer
- ){
+ if(inserted===null&&event.inputType==="insertFromPaste"&&event.dataTransfer){
   inserted=event.dataTransfer.getData("text");
  }
-
  if(inserted===null)return;
-
  const start=input.selectionStart;
  const end=input.selectionEnd;
-
- const candidate=
-  input.value.slice(0,start)+
-  inserted+
-  input.value.slice(end);
-
- // 형식 오류는 조용히 차단
+ const candidate=input.value.slice(0,start)+inserted+input.value.slice(end);
  if(!isValidWeightSyntax(candidate)){
   event.preventDefault();
   return;
  }
-
- // 자릿수 초과인 경우에만 경고
  const error=getWeightError(candidate);
-
  if(error){
-
   event.preventDefault();
   setWeightError(error);
-
  }
-
 });
-
-/*
- 붙여넣기 검사
-*/
 
 $("weight").addEventListener("paste",event=>{
-
  const input=$("weight");
  const pasted=event.clipboardData.getData("text");
-
  const start=input.selectionStart;
  const end=input.selectionEnd;
-
- const candidate=
-  input.value.slice(0,start)+
-  pasted+
-  input.value.slice(end);
-
+ const candidate=input.value.slice(0,start)+pasted+input.value.slice(end);
  if(!isValidWeightSyntax(candidate)){
   event.preventDefault();
   return;
  }
-
  const error=getWeightError(candidate);
-
- if(error){
-  event.preventDefault();
-  setWeightError(error);
- }
-
+ if(error)event.preventDefault();
 });
 
-/*
- 실제 입력 변경 확인
-
- 경고 해제 조건:
- - 백스페이스로 숫자 하나 삭제
- - 정수부 뒤 첫 번째 소수점 입력
-
- 두 번째 소수점 입력은 차단되며
- 기존 경고를 유지.
-*/
-
 $("weight").addEventListener("input",event=>{
-
  const input=$("weight");
  const value=input.value;
  const previous=lastValidWeight;
-
- // 형식 오류는 경고 없이 이전 값으로 복구
  if(!isValidWeightSyntax(value)){
-
   input.value=previous;
-
   saveWeightInput();
   render();
-
   return;
  }
-
- // 자릿수 초과는 경고 표시 후 복구
  const error=getWeightError(value);
-
  if(error){
-
   setWeightError(error);
-
   input.value=previous;
-
   saveWeightInput();
   render();
-
   return;
  }
-
- const deletedDigit=
-  event.inputType==="deleteContentBackward"&&
-  isSingleDigitDeletion(previous,value);
-
- const firstDecimal=
-  isFirstDecimalPoint(previous,value,event);
-
+ const deletedDigit=event.inputType==="deleteContentBackward"&&isSingleDigitDeletion(previous,value);
+ const firstDecimal=isFirstDecimalPoint(previous,value,event);
  lastValidWeight=value;
-
  updateConvertedLimit(value);
-
- // 지정한 두 가지 상황에서만 경고 해제
- if(deletedDigit||firstDecimal){
-  setWeightError();
- }
-
+ if(deletedDigit||firstDecimal)setWeightError();
  saveWeightInput();
-
  render();
 });
 
-function setActive(){
-
- document.querySelectorAll("[data-exercise]")
- .forEach(button=>{
-
-  const selected=
-   button.dataset.exercise===state.exercise;
-
+function updateFormulaUI(){
+ $("formulaTriggerLabel").textContent="공식 선택";
+ document.querySelectorAll("[data-formula]").forEach(button=>{
+  const selected=state.formulas.includes(button.dataset.formula);
   button.classList.toggle("active",selected);
   button.setAttribute("aria-pressed",String(selected));
- });
-
- document.querySelectorAll("[data-unit]")
- .forEach(button=>{
-
-  const selected=
-   button.dataset.unit===state.unit;
-
-  button.classList.toggle("active",selected);
-  button.setAttribute("aria-pressed",String(selected));
- });
-
- document.querySelectorAll("[data-round]")
- .forEach(button=>{
-
-  const round=Number(button.dataset.round);
-  const selected=round===state.round;
-
-  button.classList.toggle("active",selected);
-  button.setAttribute("aria-pressed",String(selected));
-
-  button.textContent=
-   button.dataset.round+state.unit;
- });
-
- document.querySelectorAll("[data-tab]")
- .forEach(button=>{
-
-  const selected=
-   button.dataset.tab===state.tab;
-
-  button.classList.toggle("active",selected);
-  button.setAttribute("aria-pressed",String(selected));
+  const check=button.querySelector(".formula-option-check");
+  if(check)check.textContent=selected?"✓":"";
  });
 }
 
-function render(){
+function openFormulaDialog(){
+ $("formulaBackdrop").hidden=false;
+ $("formulaTrigger").setAttribute("aria-expanded","true");
+ updateFormulaUI();
+}
 
+function closeFormulaDialog(){
+ $("formulaBackdrop").hidden=true;
+ $("formulaTrigger").setAttribute("aria-expanded","false");
+ $("formulaTrigger").focus();
+}
+
+$("formulaTrigger").addEventListener("click",event=>{
+ event.stopPropagation();
+ openFormulaDialog();
+});
+
+$("formulaClose").addEventListener("click",closeFormulaDialog);
+
+$("formulaBackdrop").addEventListener("click",event=>{
+ if(event.target===$("formulaBackdrop"))closeFormulaDialog();
+});
+
+document.querySelectorAll("[data-formula]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  const formula=button.dataset.formula;
+  const selected=state.formulas.includes(formula);
+  if(selected){
+   if(state.formulas.length===1)return;
+   state.formulas=state.formulas.filter(item=>item!==formula);
+  }else{
+   state.formulas.push(formula);
+  }
+  saveFormulas();
+  updateFormulaUI();
+  render();
+ });
+});
+
+document.addEventListener("keydown",event=>{
+ if(event.key==="Escape"&&!$("formulaBackdrop").hidden){
+  closeFormulaDialog();
+ }
+});
+
+function setActive(){
+ document.querySelectorAll("[data-exercise]").forEach(button=>{
+  const selected=button.dataset.exercise===state.exercise;
+  button.classList.toggle("active",selected);
+  button.setAttribute("aria-pressed",String(selected));
+ });
+ $("basicChoiceWrap").classList.toggle("active",state.exercise==="기본");
+
+ document.querySelectorAll("[data-unit]").forEach(button=>{
+  const selected=button.dataset.unit===state.unit;
+  button.classList.toggle("active",selected);
+  button.setAttribute("aria-pressed",String(selected));
+ });
+
+ document.querySelectorAll("[data-round]").forEach(button=>{
+  const round=Number(button.dataset.round);
+  const selected=round===state.round;
+  button.classList.toggle("active",selected);
+  button.setAttribute("aria-pressed",String(selected));
+  button.textContent=button.dataset.round+state.unit;
+ });
+
+ document.querySelectorAll("[data-tab]").forEach(button=>{
+  const selected=button.dataset.tab===state.tab;
+  button.classList.toggle("active",selected);
+  button.setAttribute("aria-pressed",String(selected));
+ });
+
+ updateFormulaUI();
+}
+
+function render(){
  const rawW=$("weight").value.trim();
  const rawR=$("reps").value.trim();
-
  const r=Number(rawR);
 
- const validW=
-  rawW!==""&&
-  rawW!=="."&&
-  Number.isFinite(state.weightKg)&&
-  state.weightKg>0;
-
- const validR=
-  rawR!==""&&
-  isValidReps(rawR)&&
-  rawR!=="";
+ const validW=rawW!==""&&rawW!=="."&&Number.isFinite(state.weightKg)&&state.weightKg>0;
+ const validR=rawR!==""&&isValidReps(rawR)&&rawR!=="";
 
  $("weightUnit").textContent=state.unit;
  $("resultUnit").textContent=state.unit;
  $("exerciseBadge").textContent=state.exercise;
-
- $("repsView").hidden=
-  state.tab!=="reps";
-
- $("percentView").hidden=
-  state.tab!=="percent";
+ $("repsView").hidden=state.tab!=="reps";
+ $("percentView").hidden=state.tab!=="percent";
 
  if(!validW||!validR){
-
   $("oneRm").textContent="--";
-
-  $("resultMeta").textContent=
-   "중량과 횟수를 입력해 주세요.";
-
+  $("resultMeta").textContent="중량과 횟수를 입력해 주세요.";
   $("repsView").innerHTML="";
-
-  $("percentView").innerHTML=
-   '<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
-
+  $("percentView").innerHTML='<div style="padding:18px;text-align:center;color:#555">중량과 횟수를 입력하면 결과가 표시됩니다.</div>';
   return;
  }
 
  const weightKg=state.weightKg;
-
  let oneRmKg;
+ let formulaResults=null;
 
- if(r===1){
+ if(state.exercise==="기본"){
+  formulaResults=calculateBasicFormulaResults(weightKg,r);
+  oneRmKg=formulaResults.reduce((sum,result)=>sum+result.oneRm,0)/formulaResults.length;
+ }else if(r===1){
   oneRmKg=weightKg;
- }else if(state.exercise==="기타"){
-  oneRmKg=
-   weightKg/(repPercent[r-1]/100);
  }else{
-  oneRmKg=
-   weightKg*exerciseFactors[state.exercise][r-1];
+  oneRmKg=weightKg*exerciseFactors[state.exercise][r-1];
  }
 
  const oneRm=displayFromKg(oneRmKg);
-
  $("oneRm").textContent=format(oneRm);
 
- $("resultMeta").textContent=
-  `${state.exercise} · ${rawW}${state.unit} × ${r}회`;
+ let formulaMeta="";
+ if(state.exercise==="기본"){
+  const names=getSelectedFormulaNames();
+  formulaMeta=names.length===1?` · ${names[0]}`:` · ${names.join(" + ")} 평균`;
+ }
 
- const repResults=
-  Array.from({length:12},(_,i)=>{
+ $("resultMeta").textContent=`${state.exercise}${formulaMeta} · ${rawW}${state.unit} × ${r}회`;
 
-   const targetReps=i+1;
+ const repResults=Array.from({length:12},(_,i)=>{
+  const targetReps=i+1;
+  let predictedKg;
 
-   const predictedKg=
-    state.exercise==="기타"
-     ?oneRmKg*repPercent[i]/100
-     :oneRmKg/exerciseFactors[state.exercise][i];
+  if(state.exercise==="기본"){
+   predictedKg=calculateBasicRepWeight(formulaResults,targetReps);
+  }else{
+   predictedKg=oneRmKg/exerciseFactors[state.exercise][i];
+  }
 
-   const predicted=displayFromKg(predictedKg);
+  const predicted=displayFromKg(predictedKg);
+  const percentage=oneRmKg===0?"0.0":(predictedKg/oneRmKg*100).toFixed(1);
+  const formatted=format(predicted);
+  const numberClass=formatted.includes(".")?"decimal":"";
+  const matchClass=targetReps===r?"input-match":"";
 
-   const percentage=
-    oneRmKg===0
-     ?"0.0"
-     :(predictedKg/oneRmKg*100).toFixed(1);
+  return `
+   <div class="rep-card ${matchClass}">
+    <div class="rep-title">${targetReps}RM (${percentage}%)</div>
+    <div class="rep-number ${numberClass}">${formatted}<small>${state.unit}</small></div>
+   </div>
+  `;
+ });
 
-   const formatted=format(predicted);
+ $("repsView").innerHTML=repResults.join("");
 
-   const numberClass=
-    formatted.includes(".")?"decimal":"";
-
-   const matchClass=
-    targetReps===r?"input-match":"";
-
-   return `
-    <div class="rep-card ${matchClass}">
-     <div class="rep-title">
-      ${targetReps}RM (${percentage}%)
-     </div>
-     <div class="rep-number ${numberClass}">
-      ${formatted}<small>${state.unit}</small>
-     </div>
-    </div>
-   `;
-  });
-
- $("repsView").innerHTML=
-  repResults.join("");
-
- document.querySelectorAll(".rep-number")
- .forEach(el=>{
-
-  const baseSize=
-   parseFloat(getComputedStyle(el).fontSize);
-
+ document.querySelectorAll(".rep-number").forEach(el=>{
+  const baseSize=parseFloat(getComputedStyle(el).fontSize);
   let size=baseSize;
-
   el.style.fontSize=size+"px";
-
-  while(
-   el.scrollWidth>el.clientWidth&&size>10
-  ){
+  while(el.scrollWidth>el.clientWidth&&size>10){
    size-=0.5;
    el.style.fontSize=size+"px";
   }
  });
 
- const percentRows=[
-  120,115,110,105,100,95,90,85,
-  80,75,70,65,60,55,50,45,
-  40,35,30,25,20,15,10,5
- ];
+ const percentRows=[120,115,110,105,100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5];
 
- $("percentView").innerHTML=
-  percentRows.map(pct=>{
-
-   const predicted=oneRm*pct/100;
-
-   return `
-    <div class="percent-row ${pct===100?"highlight":""}">
-     <span>${pct}%</span>
-     <span class="percent-result">
-      ${format(predicted)}<small>${state.unit}</small>
-     </span>
-    </div>
-   `;
-  }).join("");
+ $("percentView").innerHTML=percentRows.map(pct=>{
+  const predicted=oneRm*pct/100;
+  return `
+   <div class="percent-row ${pct===100?"highlight":""}">
+    <span>${pct}%</span>
+    <span class="percent-result">${format(predicted)}<small>${state.unit}</small></span>
+   </div>
+  `;
+ }).join("");
 }
 
-document.querySelectorAll("[data-exercise]")
-.forEach(button=>{
+document.querySelectorAll("[data-exercise]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.exercise=button.dataset.exercise;
   setActive();
@@ -1418,15 +1609,13 @@ document.querySelectorAll("[data-exercise]")
  });
 });
 
-document.querySelectorAll("[data-unit]")
-.forEach(button=>{
+document.querySelectorAll("[data-unit]").forEach(button=>{
  button.addEventListener("click",()=>{
   changeWeightUnit(button.dataset.unit);
  });
 });
 
-document.querySelectorAll("[data-round]")
-.forEach(button=>{
+document.querySelectorAll("[data-round]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.round=Number(button.dataset.round);
   setActive();
@@ -1434,8 +1623,7 @@ document.querySelectorAll("[data-round]")
  });
 });
 
-document.querySelectorAll("[data-tab]")
-.forEach(button=>{
+document.querySelectorAll("[data-tab]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.tab=button.dataset.tab;
   setActive();
@@ -1443,140 +1631,72 @@ document.querySelectorAll("[data-tab]")
  });
 });
 
-/* 중량 입력 시 커서를 끝으로 이동 */
-
 $("weight").addEventListener("focus",()=>{
-
  const input=$("weight");
-
  requestAnimationFrame(()=>{
-
   if(document.activeElement!==input)return;
-
   const length=input.value.length;
-
   input.setSelectionRange(length,length);
-
  });
-
 });
 
-/* 키보드 완료 버튼 */
-
 ["weight","reps"].forEach(id=>{
-
  $(id).addEventListener("keydown",event=>{
-
   if(event.key==="Enter"){
    event.preventDefault();
    $(id).blur();
   }
-
  });
-
 });
-
-/* 빈 공간 터치 시 키보드 닫기 (스크롤 제외) */
 
 let touchStartX=0;
 let touchStartY=0;
 
 document.addEventListener("touchstart",event=>{
-
  const active=document.activeElement;
-
- if(
-  !active ||
-  (active.id!=="weight" && active.id!=="reps")
- )return;
-
+ if(!active||(active.id!=="weight"&&active.id!=="reps"))return;
  if(event.target.closest("#weight, #reps"))return;
-
  touchStartX=event.touches[0].clientX;
  touchStartY=event.touches[0].clientY;
-
 },{passive:true});
-
 
 document.addEventListener("touchend",event=>{
-
  const active=document.activeElement;
-
- if(
-  !active ||
-  (active.id!=="weight" && active.id!=="reps")
- )return;
-
+ if(!active||(active.id!=="weight"&&active.id!=="reps"))return;
  const touch=event.changedTouches[0];
-
  const moveX=Math.abs(touch.clientX-touchStartX);
  const moveY=Math.abs(touch.clientY-touchStartY);
-
- if(moveX<=10 && moveY<=10){
-  active.blur();
- }
-
+ if(moveX<=10&&moveY<=10)active.blur();
 },{passive:true});
 
-/* 횟수 입력칸 포커스 시 초기화 */
-
 $("reps").addEventListener("focus",()=>{
-
  $("reps").value="";
  lastValidReps="";
-
  render();
 });
 
-/* 횟수 입력 제한 */
-
 $("reps").addEventListener("beforeinput",event=>{
-
- if(
-  event.inputType&&
-  event.inputType.startsWith("delete")
- ){
-  return;
- }
-
+ if(event.inputType&&event.inputType.startsWith("delete"))return;
  const input=$("reps");
-
  let inserted=event.data;
-
- if(
-  inserted===null&&
-  event.inputType==="insertFromPaste"&&
-  event.dataTransfer
- ){
+ if(inserted===null&&event.inputType==="insertFromPaste"&&event.dataTransfer){
   inserted=event.dataTransfer.getData("text");
  }
-
  if(inserted===null)return;
-
  const start=input.selectionStart;
  const end=input.selectionEnd;
-
- const candidate=
-  input.value.slice(0,start)+
-  inserted+
-  input.value.slice(end);
-
- if(!isValidReps(candidate)){
-  event.preventDefault();
- }
+ const candidate=input.value.slice(0,start)+inserted+input.value.slice(end);
+ if(!isValidReps(candidate))event.preventDefault();
 });
 
 $("reps").addEventListener("input",()=>{
-
  const input=$("reps");
  const value=input.value;
-
  if(isValidReps(value)){
   lastValidReps=value;
  }else{
   input.value=lastValidReps;
  }
-
  render();
 });
 
@@ -1584,18 +1704,12 @@ setActive();
 render();
 
 })();
-
 </script>
 
 <script>
 if("serviceWorker" in navigator){
-
  window.addEventListener("load",()=>{
-
-  navigator.serviceWorker
-   .register("./sw.js")
-   .catch(()=>{});
-
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
  });
 }
 </script>
