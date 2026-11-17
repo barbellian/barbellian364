@@ -1619,8 +1619,8 @@ function render(){
   ?formulaMeta
   :state.exercise;
 
- $("resultMeta").textContent=
-  `${resultLabel} · ${rawW}${state.unit} × ${r}회`;
+ $("resultMeta").innerHTML=
+   `${resultLabel} · <span style="white-space:nowrap">${rawW}${state.unit} × ${r}회</span>`;
 
  const repResults=Array.from({length:12},(_,i)=>{
   const targetReps=i+1;
