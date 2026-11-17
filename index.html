@@ -582,25 +582,9 @@ input:focus{
 }
 
 .result-meta{
- display:flex;
- flex-wrap:wrap;
- align-items:center;
- column-gap:5px;
- row-gap:3px;
  font-size:13px;
  color:#ddd;
  margin-top:8px;
-}
-
-.meta-group{
- display:inline-block;
- white-space:nowrap;
- word-break:keep-all;
- overflow-wrap:normal;
-}
-
-.meta-separator{
- white-space:nowrap;
 }
 
 .tabs{
@@ -1635,12 +1619,8 @@ function render(){
   ?formulaMeta
   :state.exercise;
 
- const meta=$("resultMeta");
-
- meta.innerHTML=
-  `<span class="meta-group">${resultLabel}</span>`+
-  `<span class="meta-separator">·</span>`+
-  `<span class="meta-group">${rawW}${state.unit} × ${r}회</span>`;
+ $("resultMeta").textContent=
+  `${resultLabel} · ${rawW}${state.unit} × ${r}회`;
 
  const repResults=Array.from({length:12},(_,i)=>{
   const targetReps=i+1;
