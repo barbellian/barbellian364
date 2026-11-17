@@ -215,6 +215,16 @@ h1{
  font-size:11px;
  font-weight:850;
  padding:5px 3px;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+ user-select:none;
+ -webkit-user-select:none;
+}
+
+.formula-trigger:active{
+ background:#fff;
+ color:#333;
+ transform:none;
 }
 
 .formula-trigger .arrow{
@@ -324,8 +334,6 @@ h1{
  overflow-y:auto;
  overscroll-behavior:contain;
  -webkit-overflow-scrolling:touch;
-
- /* 스크롤 영역만 오른쪽으로 확장 */
  margin-right:-18px;
  padding-right:18px;
 }
@@ -1458,8 +1466,19 @@ function closeFormulaDialog(){
  $("formulaTrigger").focus();
 }
 
+/* 공식 선택 버튼 동작
+   다른 종목 상태: 기본으로 전환만 하고 창은 열지 않음
+   기본 상태: 공식 선택 창 열기 */
 $("formulaTrigger").addEventListener("click",event=>{
  event.stopPropagation();
+
+ if(state.exercise!=="기본"){
+  state.exercise="기본";
+  setActive();
+  render();
+  return;
+ }
+
  openFormulaDialog();
 });
 
@@ -1617,7 +1636,17 @@ function render(){
  }).join("");
 }
 
-document.querySelectorAll("[data-exercise]").forEach(button=>{
+/* 기본 버튼은 기본 종목으로 전환하는 역할만 수행 */
+$("basicChoice").addEventListener("click",()=>{
+ if(state.exercise==="기본")return;
+
+ state.exercise="기본";
+ setActive();
+ render();
+});
+
+/* 나머지 종목 선택 */
+document.querySelectorAll('.choice[data-exercise]:not(#basicChoice)').forEach(button=>{
  button.addEventListener("click",()=>{
   state.exercise=button.dataset.exercise;
   setActive();
