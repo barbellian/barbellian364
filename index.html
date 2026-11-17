@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ko">
 <head>
@@ -233,7 +232,6 @@ h1{
  border-color:#111;
 }
 
-/* 기본 선택 시 공식 버튼 라이트 그레이 */
 .choice-basic-wrap.active .formula-trigger{
  background:#ededed;
  color:#333;
@@ -265,7 +263,9 @@ h1{
  width:100%;
  max-width:360px;
  max-height:calc(100dvh - 40px);
- overflow-y:auto;
+ display:flex;
+ flex-direction:column;
+ overflow:hidden;
  overscroll-behavior:contain;
  background:#fff;
  border-radius:19px;
@@ -273,11 +273,11 @@ h1{
  box-shadow:0 12px 40px #00000030;
 }
 
-/* 옵션 창 상단 고정 */
+/* 제목과 X 버튼 상단 고정 */
 .formula-dialog-header{
- position:sticky;
- top:-20px;
+ position:relative;
  z-index:10;
+ flex-shrink:0;
  background:#fff;
  margin:-20px -18px 0;
  padding:20px 18px 0;
@@ -304,17 +304,29 @@ h1{
  flex-shrink:0;
 }
 
+/* 설명 문구 고정 */
 .formula-description{
+ flex-shrink:0;
  margin:5px 0 16px;
  font-size:12px;
  line-height:1.5;
  color:#666;
 }
 
+/* 공식 목록 스크롤바를 오른쪽으로 이동 */
 .formula-options{
  display:flex;
  flex-direction:column;
  gap:8px;
+ flex:1;
+ min-height:0;
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+
+ /* 스크롤 영역만 오른쪽으로 확장 */
+ margin-right:-18px;
+ padding-right:18px;
 }
 
 .formula-option{
@@ -323,6 +335,7 @@ h1{
  justify-content:space-between;
  width:100%;
  min-height:54px;
+ flex-shrink:0;
  padding:10px 13px;
  border:1.5px solid #ccc;
  border-radius:11px;
@@ -331,9 +344,17 @@ h1{
  text-align:left;
 }
 
-.formula-option.active{
- border-color:#111;
- background:#f1f1f1;
+/* 선택된 공식: 횟수별·퍼센트별 탭과 동일한 진회색 */
+.formula-option.active,
+.formula-option.active:focus,
+.formula-option.active:hover{
+ border-color:#606060 !important;
+ background-color:#606060 !important;
+ color:#fff !important;
+}
+
+.formula-option.active .formula-option-sub{
+ color:#e5e5e5 !important;
 }
 
 .formula-option-main{
@@ -353,12 +374,19 @@ h1{
  font-weight:600;
 }
 
+/* 선택된 공식의 보조 설명 */
+.formula-option.active .formula-option-sub{
+ color:#e5e5e5;
+}
+
 .formula-option-check{
  font-size:17px;
  font-weight:900;
 }
 
+/* 하단 안내 문구 고정 */
 .formula-dialog-note{
+ flex-shrink:0;
  margin:14px 2px 0;
  font-size:10.5px;
  line-height:1.5;
