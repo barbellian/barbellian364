@@ -1757,6 +1757,13 @@ function finishCloseFormulaDialog(){
 
 /* X 버튼과 ESC 공통 닫기 동작 */
 function closeFormulaDialog(){
+
+ /* 공식이 하나도 없으면 경고만 표시하고 창 유지 */
+ if(state.formulas.length===0){
+  showCenterToast();
+  return;
+ }
+
  const hasChanges=
   JSON.stringify(state.formulas)!==JSON.stringify(originalFormulas);
 
