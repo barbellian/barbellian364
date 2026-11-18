@@ -413,15 +413,6 @@ h1{
  color:#777;
 }
 
-/* 공식 선택 창의 일반 텍스트는 더블탭 확대 방지 */
-.formula-dialog-title,
-.formula-description,
-.formula-dialog-note{
- -webkit-user-select:none;
- user-select:none;
- -webkit-touch-callout:none;
-}
-
 /* 변경사항 저장 확인 창 */
 .formula-confirm-backdrop{
  position:fixed;
@@ -1008,6 +999,7 @@ details[open] summary:after{content:"－";}
 
 <body>
 
+<!-- 중앙 토스트 알림 -->
 <div class="center-toast" id="centerToast" role="status" aria-live="polite">
  <span class="center-toast-icon">!</span>
  <span>하나 이상의 공식을 선택해 주세요.</span>
@@ -1092,7 +1084,10 @@ details[open] summary:after{content:"－";}
 
 <div class="formula-options">
 
-<button type="button" class="formula-option active" data-formula="nsca" aria-pressed="true">
+<button type="button"
+ class="formula-option active"
+ data-formula="nsca"
+ aria-pressed="true">
 <span class="formula-option-main">
 <span class="formula-option-name">NSCA</span>
 <span class="formula-option-sub">반복 횟수별 공통 기준</span>
@@ -1322,70 +1317,6 @@ stroke-linejoin="round" aria-hidden="true">
 
 const $=id=>document.getElementById(id);
 
-/*
- 공식 선택 창에서 iOS 더블탭 확대 방지
-
- 두 번째 터치가 시작되는 시점에 확대를 차단한다.
- 버튼, 공식 선택 옵션, 스크롤 영역은 제외한다.
-*/
-
-let lastFormulaTextTap=0;
-let lastFormulaTapX=0;
-let lastFormulaTapY=0;
-
-const formulaBackdrop=$("formulaBackdrop");
-
-/* 두 번째 터치가 시작되는 순간 확대 차단 */
-formulaBackdrop.addEventListener("touchstart",event=>{
- if(event.touches.length!==1)return;
-
- const target=event.target;
-
- if(!(target instanceof Element))return;
-
- /* 버튼, 입력창, 링크, 공식 선택 영역은 제외 */
- if(target.closest("button, input, a, .formula-options"))return;
-
- /* 공식 선택 창 내부에서만 적용 */
- if(!target.closest(".formula-dialog"))return;
-
- const touch=event.touches[0];
- const now=Date.now();
-
- const distanceX=Math.abs(touch.clientX-lastFormulaTapX);
- const distanceY=Math.abs(touch.clientY-lastFormulaTapY);
-
- const isDoubleTap=
-  now-lastFormulaTextTap<400&&
-  distanceX<30&&
-  distanceY<30;
-
- if(isDoubleTap){
-  event.preventDefault();
-  lastFormulaTextTap=0;
-  return;
- }
-
- lastFormulaTextTap=now;
- lastFormulaTapX=touch.clientX;
- lastFormulaTapY=touch.clientY;
-
-},{passive:false,capture:true});
-
-/* iOS에서 발생하는 더블클릭 확대도 차단 */
-formulaBackdrop.addEventListener("dblclick",event=>{
- const target=event.target;
-
- if(!(target instanceof Element))return;
-
- if(target.closest("button, input, a, .formula-options"))return;
- if(!target.closest(".formula-dialog"))return;
-
- event.preventDefault();
- event.stopPropagation();
-
-},true);
-
 /* 중앙 토스트 표시 */
 let toastTimer=null;
 
@@ -1393,8 +1324,12 @@ function showCenterToast(){
  const toast=$("centerToast");
 
  clearTimeout(toastTimer);
+
  toast.classList.remove("show");
+
+ /* 기존 애니메이션을 초기화하고 다시 실행 */
  void toast.offsetWidth;
+
  toast.classList.add("show");
 
  toastTimer=setTimeout(()=>{
@@ -1456,6 +1391,8 @@ const LB_PER_KG=2.2046226218;
 
 let lastValidReps="";
 let lastValidWeight="";
+
+/* 공식 선택창을 열었을 때의 원래 선택 상태 */
 let originalFormulas=[];
 
 function saveFormulas(){
@@ -1616,6 +1553,7 @@ function calculateBasicRepWeight(formulaResults,reps){
  });
 
  const total=values.reduce((sum,value)=>sum+value,0);
+
  return total/values.length;
 }
 
@@ -1637,6 +1575,7 @@ function displayFromKg(kg){
 
 function formatConvertedWeight(value){
  if(!Number.isFinite(value))return "";
+
  return Number(value.toFixed(4)).toString();
 }
 
@@ -1696,6 +1635,7 @@ function changeWeightUnit(next){
  }
 
  lastValidWeight=$("weight").value;
+
  setWeightError();
  setActive();
  render();
@@ -1716,6 +1656,7 @@ $("weight").addEventListener("beforeinput",event=>{
 
  const start=input.selectionStart;
  const end=input.selectionEnd;
+
  const candidate=input.value.slice(0,start)+inserted+input.value.slice(end);
 
  if(!isValidWeightSyntax(candidate)){
@@ -1734,8 +1675,10 @@ $("weight").addEventListener("beforeinput",event=>{
 $("weight").addEventListener("paste",event=>{
  const input=$("weight");
  const pasted=event.clipboardData.getData("text");
+
  const start=input.selectionStart;
  const end=input.selectionEnd;
+
  const candidate=input.value.slice(0,start)+pasted+input.value.slice(end);
 
  if(!isValidWeightSyntax(candidate)){
@@ -1744,6 +1687,7 @@ $("weight").addEventListener("paste",event=>{
  }
 
  const error=getWeightError(candidate);
+
  if(error)event.preventDefault();
 });
 
@@ -1773,6 +1717,7 @@ $("weight").addEventListener("input",event=>{
  const firstDecimal=isFirstDecimalPoint(previous,value,event);
 
  lastValidWeight=value;
+
  updateConvertedLimit(value);
 
  if(deletedDigit||firstDecimal)setWeightError();
@@ -1791,10 +1736,12 @@ function updateFormulaUI(){
   button.setAttribute("aria-pressed",String(selected));
 
   const check=button.querySelector(".formula-option-check");
+
   if(check)check.textContent=selected?"✓":"";
  });
 }
 
+/* 공식 선택창 열기 */
 function openFormulaDialog(){
  originalFormulas=[...state.formulas];
 
@@ -1805,6 +1752,7 @@ function openFormulaDialog(){
  updateFormulaUI();
 }
 
+/* 공식 선택창 실제 닫기 */
 function finishCloseFormulaDialog(){
  $("formulaConfirmBackdrop").hidden=true;
  $("formulaBackdrop").hidden=true;
@@ -1812,7 +1760,10 @@ function finishCloseFormulaDialog(){
  $("formulaTrigger").focus();
 }
 
+/* X 버튼과 ESC 공통 닫기 동작 */
 function closeFormulaDialog(){
+
+ /* 공식이 하나도 없으면 경고만 표시하고 창 유지 */
  if(state.formulas.length===0){
   showCenterToast();
   return;
@@ -1821,22 +1772,27 @@ function closeFormulaDialog(){
  const hasChanges=
   JSON.stringify(state.formulas)!==JSON.stringify(originalFormulas);
 
+ /* 변경사항이 없으면 바로 닫기 */
  if(!hasChanges){
   finishCloseFormulaDialog();
   return;
  }
 
+ /* 변경사항이 있으면 저장 여부 확인 */
  $("formulaConfirmBackdrop").hidden=false;
 }
 
+/* 저장 안 함: 원래 선택 상태로 복원 */
 $("formulaDiscard").addEventListener("click",()=>{
  state.formulas=[...originalFormulas];
 
  updateFormulaUI();
  render();
+
  finishCloseFormulaDialog();
 });
 
+/* 저장: 현재 선택 상태를 저장 */
 $("formulaSave").addEventListener("click",()=>{
  if(state.formulas.length===0){
   showCenterToast();
@@ -1844,10 +1800,13 @@ $("formulaSave").addEventListener("click",()=>{
  }
 
  saveFormulas();
+
  originalFormulas=[...state.formulas];
+
  finishCloseFormulaDialog();
 });
 
+/* 공식 선택 버튼 동작 */
 $("formulaTrigger").addEventListener("click",event=>{
  event.stopPropagation();
 
@@ -1863,6 +1822,7 @@ $("formulaTrigger").addEventListener("click",event=>{
 
 $("formulaClose").addEventListener("click",closeFormulaDialog);
 
+/* 공식 선택 및 해제: 즉시 저장하지 않음 */
 document.querySelectorAll("[data-formula]").forEach(button=>{
  button.addEventListener("click",()=>{
   const formula=button.dataset.formula;
@@ -1879,10 +1839,12 @@ document.querySelectorAll("[data-formula]").forEach(button=>{
  });
 });
 
+/* ESC 키도 X 버튼과 동일하게 동작 */
 document.addEventListener("keydown",event=>{
  if(event.key!=="Escape")return;
 
  if(!$("formulaConfirmBackdrop").hidden){
+  /* 확인창에서 ESC를 누르면 확인창만 닫고 선택창으로 돌아감 */
   $("formulaConfirmBackdrop").hidden=true;
   return;
  }
@@ -1954,6 +1916,7 @@ function render(){
   return;
  }
 
+ /* 기본 종목에서 공식이 하나도 선택되지 않은 경우 */
  if(state.exercise==="기본"&&state.formulas.length===0){
   $("oneRm").textContent="--";
 
@@ -1977,6 +1940,7 @@ function render(){
 
  if(state.exercise==="기본"){
   formulaResults=calculateBasicFormulaResults(weightKg,r);
+
   oneRmKg=formulaResults.reduce((sum,result)=>sum+result.oneRm,0)/formulaResults.length;
  }else if(r===1){
   oneRmKg=weightKg;
@@ -1985,6 +1949,7 @@ function render(){
  }
 
  const oneRm=displayFromKg(oneRmKg);
+
  $("oneRm").textContent=format(oneRm);
 
  let formulaMeta="";
@@ -2056,17 +2021,21 @@ function render(){
  }).join("");
 }
 
+/* 기본 버튼은 기본 종목으로 전환하는 역할만 수행 */
 $("basicChoice").addEventListener("click",()=>{
  if(state.exercise==="기본")return;
 
  state.exercise="기본";
+
  setActive();
  render();
 });
 
+/* 나머지 종목 선택 */
 document.querySelectorAll('.choice[data-exercise]:not(#basicChoice)').forEach(button=>{
  button.addEventListener("click",()=>{
   state.exercise=button.dataset.exercise;
+
   setActive();
   render();
  });
@@ -2081,6 +2050,7 @@ document.querySelectorAll("[data-unit]").forEach(button=>{
 document.querySelectorAll("[data-round]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.round=Number(button.dataset.round);
+
   setActive();
   render();
  });
@@ -2089,6 +2059,7 @@ document.querySelectorAll("[data-round]").forEach(button=>{
 document.querySelectorAll("[data-tab]").forEach(button=>{
  button.addEventListener("click",()=>{
   state.tab=button.dataset.tab;
+
   setActive();
   render();
  });
@@ -2099,7 +2070,9 @@ $("weight").addEventListener("focus",()=>{
 
  requestAnimationFrame(()=>{
   if(document.activeElement!==input)return;
+
   const length=input.value.length;
+
   input.setSelectionRange(length,length);
  });
 });
@@ -2132,6 +2105,7 @@ document.addEventListener("touchend",event=>{
  if(!active||(active.id!=="weight"&&active.id!=="reps"))return;
 
  const touch=event.changedTouches[0];
+
  const moveX=Math.abs(touch.clientX-touchStartX);
  const moveY=Math.abs(touch.clientY-touchStartY);
 
@@ -2158,6 +2132,7 @@ $("reps").addEventListener("beforeinput",event=>{
 
  const start=input.selectionStart;
  const end=input.selectionEnd;
+
  const candidate=input.value.slice(0,start)+inserted+input.value.slice(end);
 
  if(!isValidReps(candidate))event.preventDefault();
