@@ -1323,42 +1323,42 @@ stroke-linejoin="round" aria-hidden="true">
 const $=id=>document.getElementById(id);
 
 /*
- 공식 선택 창의 일반 텍스트 영역에서만
- iOS 더블탭 확대를 차단한다.
+ 공식 선택 창에서 iOS 더블탭 확대 방지
 
- 버튼, 입력 요소, 스크롤 영역은 제외한다.
+ 두 번째 터치가 시작되는 시점에 확대를 차단한다.
+ 버튼, 공식 선택 옵션, 스크롤 영역은 제외한다.
 */
+
 let lastFormulaTextTap=0;
 let lastFormulaTapX=0;
 let lastFormulaTapY=0;
 
-$("formulaBackdrop").addEventListener("touchend",event=>{
- if(event.touches.length>0)return;
+const formulaBackdrop=$("formulaBackdrop");
+
+/* 두 번째 터치가 시작되는 순간 확대 차단 */
+formulaBackdrop.addEventListener("touchstart",event=>{
+ if(event.touches.length!==1)return;
 
  const target=event.target;
 
  if(!(target instanceof Element))return;
 
- /* 버튼이나 선택 옵션을 누른 동작은 건드리지 않음 */
+ /* 버튼, 입력창, 링크, 공식 선택 영역은 제외 */
  if(target.closest("button, input, a, .formula-options"))return;
 
- /* 일반 텍스트 영역만 대상으로 함 */
- const textArea=target.closest(
-  ".formula-dialog-title, .formula-description, .formula-dialog-note"
- );
+ /* 공식 선택 창 내부에서만 적용 */
+ if(!target.closest(".formula-dialog"))return;
 
- if(!textArea)return;
-
- const touch=event.changedTouches[0];
+ const touch=event.touches[0];
  const now=Date.now();
 
  const distanceX=Math.abs(touch.clientX-lastFormulaTapX);
  const distanceY=Math.abs(touch.clientY-lastFormulaTapY);
 
  const isDoubleTap=
-  now-lastFormulaTextTap<500&&
-  distanceX<25&&
-  distanceY<25;
+  now-lastFormulaTextTap<400&&
+  distanceX<30&&
+  distanceY<30;
 
  if(isDoubleTap){
   event.preventDefault();
@@ -1371,6 +1371,20 @@ $("formulaBackdrop").addEventListener("touchend",event=>{
  lastFormulaTapY=touch.clientY;
 
 },{passive:false,capture:true});
+
+/* iOS에서 발생하는 더블클릭 확대도 차단 */
+formulaBackdrop.addEventListener("dblclick",event=>{
+ const target=event.target;
+
+ if(!(target instanceof Element))return;
+
+ if(target.closest("button, input, a, .formula-options"))return;
+ if(!target.closest(".formula-dialog"))return;
+
+ event.preventDefault();
+ event.stopPropagation();
+
+},true);
 
 /* 중앙 토스트 표시 */
 let toastTimer=null;
