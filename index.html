@@ -30,6 +30,11 @@ html{
  touch-action:manipulation;
 }
 
+body,
+body *{
+ touch-action:manipulation;
+}
+
 body{
  margin:0;
  background:#f3f3f3;
@@ -406,6 +411,62 @@ h1{
  font-size:10.5px;
  line-height:1.5;
  color:#777;
+}
+
+/* 변경사항 저장 확인 창 */
+.formula-confirm-backdrop{
+ position:fixed;
+ inset:0;
+ z-index:1100;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ background:rgba(0,0,0,.48);
+}
+
+.formula-confirm-backdrop[hidden]{display:none;}
+
+.formula-confirm-dialog{
+ width:100%;
+ max-width:310px;
+ padding:22px 19px 17px;
+ border-radius:17px;
+ background:#fff;
+ box-shadow:0 12px 40px #00000030;
+}
+
+.formula-confirm-title{
+ font-size:17px;
+ line-height:1.45;
+ font-weight:900;
+ text-align:center;
+}
+
+.formula-confirm-buttons{
+ display:flex;
+ gap:8px;
+ margin-top:21px;
+}
+
+.formula-confirm-buttons button{
+ flex:1;
+ min-width:0;
+ min-height:43px;
+ border:0;
+ border-radius:10px;
+ font-size:14px;
+ font-weight:850;
+}
+
+.formula-discard{
+ background:#ededed;
+ color:#333;
+}
+
+.formula-save{
+ background:#111;
+ color:#fff;
 }
 
 /* 화면 중앙 토스트 알림 */
@@ -1018,7 +1079,7 @@ details[open] summary:after{content:"－";}
 </div>
 
 <p class="formula-description">
-기본 종목에 적용할 계산 공식을 선택합니다.
+ 기본 종목에 적용할 계산 공식을 선택합니다. (복수 선택 가능)
 </p>
 
 <div class="formula-options">
@@ -1093,11 +1154,34 @@ details[open] summary:after{content:"－";}
 </div>
 
 <p class="formula-dialog-note">
-여러 공식을 선택하면 각 공식의 1RM 추정값을 산술평균합니다.<br>
-창을 닫으려면 하나 이상의 공식을 선택해야 합니다. 선택 내용은 자동 저장됩니다.
+※ 여러 공식을 선택할 경우 각 공식의 추정값을 평균하여 산출합니다.<br>
+※ 한개 이상의 공식을 선택하셔야 결과값이 산출됩니다.<br>
+※ 선택 내용은 저장 버튼을 눌러 저장합니다.
 </p>
 
 </section>
+</div>
+
+<!-- 변경사항 저장 확인 창 -->
+<div class="formula-confirm-backdrop" id="formulaConfirmBackdrop" hidden>
+ <section class="formula-confirm-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="formulaConfirmTitle">
+
+  <div class="formula-confirm-title" id="formulaConfirmTitle">
+   변경사항을 저장 하시겠습니까?
+  </div>
+
+  <div class="formula-confirm-buttons">
+   <button type="button" class="formula-discard" id="formulaDiscard">
+    저장 안 함
+   </button>
+   <button type="button" class="formula-save" id="formulaSave">
+    저장
+   </button>
+  </div>
+ </section>
 </div>
 
 <div class="rounding-header">
@@ -1307,6 +1391,9 @@ const LB_PER_KG=2.2046226218;
 
 let lastValidReps="";
 let lastValidWeight="";
+
+/* 공식 선택창을 열었을 때의 원래 선택 상태 */
+let originalFormulas=[];
 
 function saveFormulas(){
  try{
@@ -1654,24 +1741,70 @@ function updateFormulaUI(){
  });
 }
 
+/* 공식 선택창 열기 */
 function openFormulaDialog(){
+ originalFormulas=[...state.formulas];
+
  $("formulaBackdrop").hidden=false;
+ $("formulaConfirmBackdrop").hidden=true;
  $("formulaTrigger").setAttribute("aria-expanded","true");
 
  updateFormulaUI();
 }
 
-/* 공식이 하나도 선택되지 않았다면 중앙 토스트 표시 */
+/* 공식 선택창 실제 닫기 */
+function finishCloseFormulaDialog(){
+ $("formulaConfirmBackdrop").hidden=true;
+ $("formulaBackdrop").hidden=true;
+ $("formulaTrigger").setAttribute("aria-expanded","false");
+ $("formulaTrigger").focus();
+}
+
+/* X 버튼과 ESC 공통 닫기 동작 */
 function closeFormulaDialog(){
+
+ /* 공식이 하나도 없으면 경고만 표시하고 창 유지 */
  if(state.formulas.length===0){
   showCenterToast();
   return;
  }
 
- $("formulaBackdrop").hidden=true;
- $("formulaTrigger").setAttribute("aria-expanded","false");
- $("formulaTrigger").focus();
+ const hasChanges=
+  JSON.stringify(state.formulas)!==JSON.stringify(originalFormulas);
+
+ /* 변경사항이 없으면 바로 닫기 */
+ if(!hasChanges){
+  finishCloseFormulaDialog();
+  return;
+ }
+
+ /* 변경사항이 있으면 저장 여부 확인 */
+ $("formulaConfirmBackdrop").hidden=false;
 }
+
+/* 저장 안 함: 원래 선택 상태로 복원 */
+$("formulaDiscard").addEventListener("click",()=>{
+ state.formulas=[...originalFormulas];
+
+ updateFormulaUI();
+ render();
+
+ finishCloseFormulaDialog();
+});
+
+/* 저장: 현재 선택 상태를 저장 */
+$("formulaSave").addEventListener("click",()=>{
+ if(state.formulas.length===0){
+  showCenterToast();
+  return;
+ }
+
+ saveFormulas();
+
+ originalFormulas=[...state.formulas];
+
+ finishCloseFormulaDialog();
+});
 
 /* 공식 선택 버튼 동작 */
 $("formulaTrigger").addEventListener("click",event=>{
@@ -1689,13 +1822,7 @@ $("formulaTrigger").addEventListener("click",event=>{
 
 $("formulaClose").addEventListener("click",closeFormulaDialog);
 
-$("formulaBackdrop").addEventListener("click",event=>{
- if(event.target===$("formulaBackdrop")){
-  closeFormulaDialog();
- }
-});
-
-/* 공식 선택 및 해제 */
+/* 공식 선택 및 해제: 즉시 저장하지 않음 */
 document.querySelectorAll("[data-formula]").forEach(button=>{
  button.addEventListener("click",()=>{
   const formula=button.dataset.formula;
@@ -1707,15 +1834,22 @@ document.querySelectorAll("[data-formula]").forEach(button=>{
    state.formulas.push(formula);
   }
 
-  saveFormulas();
   updateFormulaUI();
   render();
  });
 });
 
-/* ESC 키로 닫을 때도 공식 선택 여부 확인 */
+/* ESC 키도 X 버튼과 동일하게 동작 */
 document.addEventListener("keydown",event=>{
- if(event.key==="Escape"&&!$("formulaBackdrop").hidden){
+ if(event.key!=="Escape")return;
+
+ if(!$("formulaConfirmBackdrop").hidden){
+  /* 확인창에서 ESC를 누르면 확인창만 닫고 선택창으로 돌아감 */
+  $("formulaConfirmBackdrop").hidden=true;
+  return;
+ }
+
+ if(!$("formulaBackdrop").hidden){
   closeFormulaDialog();
  }
 });
@@ -1789,7 +1923,7 @@ function render(){
   $("resultMeta").innerHTML=
    '<div class="result-warning">' +
    '<span class="result-warning-icon">!</span>' +
-   '<span>하나 이상의 공식을 선택해 주세요.</span>' +
+   '<span>공식 선택창에서 공식을 선택해 주세요.</span>' +
    '</div>';
 
   $("repsView").innerHTML='<div style="grid-column:1 / -1;padding:18px;text-align:center;color:#555">하나 이상의 공식을 선택하면 결과가 표시됩니다.</div>';
